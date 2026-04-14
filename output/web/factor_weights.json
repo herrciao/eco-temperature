@@ -1,0 +1,34 @@
+{
+  "growth": {
+    "copper_mom3_z": 0.2,
+    "bdry_mom1_z": 0.2,
+    "nfp_change_z": 0.2,
+    "unrate_trend_inv_z": 0.15,
+    "durable_goods_z": 0.25
+  },
+  "inflation": {
+    "wti_mom3_z": 0.35,
+    "copper_mom3_z": 0.25,
+    "breakeven_z": 0.4
+  },
+  "liquidity": {
+    "fed_change_inv_z": 0.2,
+    "curve_z": 0.2,
+    "dxy_mom_inv_z": 0.15,
+    "hy_oas_inv_z": 0.25,
+    "real_yield_inv_z": 0.2
+  },
+  "risk_linear": {
+    "growth": 0.34,
+    "inflation_inv": 0.33,
+    "liquidity": 0.33
+  },
+  "risk_curve_boost": 0.1,
+  "macro_temperature_blend": {
+    "growth": 1.0,
+    "inflation": -0.5,
+    "liquidity": 0.5,
+    "risk": 0.5
+  },
+  "_note": "risk_curve_boost 與 macro_temperature_blend 係數見 scores/composite.py；與 TS 文案一致。"
+}

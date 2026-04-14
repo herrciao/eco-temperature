@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+macro.db
+output/artifacts/
+# 儀表板執行需要；部署時須一併提交（可定期用 python 更新）
+output/web/*
+!output/web/*.json
+.mplconfig/
+.DS_Store
