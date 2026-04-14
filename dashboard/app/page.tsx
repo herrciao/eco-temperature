@@ -56,17 +56,13 @@ cd dashboard && npm run dev`}
             宏觀溫度看板
           </h1>
           <p className="mt-1 text-sm text-slate-400">
-            本機研究用看板 — 更新資料請在專案根目錄執行{" "}
-            <code className="rounded bg-slate-800 px-1 py-0.5 text-slate-200">
-              python main.py score && python main.py export
-            </code>
-            。圖表區最上方為時間範圍滑桿（更新後請重新整理頁面）。
+            整合成長、通膨、流動性與風險偏好，提供宏觀環境的一站式概覽。
           </p>
         </header>
 
         <RegimeHero current={data.current} deltas={deltas} />
 
-        <FactorCards current={data.current} deltas={deltas} />
+        <FactorCards current={data.current} deltas={deltas} panel={data.panel} />
 
         <ClientOnly
           fallback={
@@ -75,6 +71,34 @@ cd dashboard && npm run dev`}
         >
           <PanelTimeRangeSection panel={data.panel} events={chartEvents} />
         </ClientOnly>
+
+        {/* 開發者資訊 */}
+        <footer className="border-t border-slate-800/60 pt-6">
+          <details className="group">
+            <summary className="cursor-pointer select-none text-xs text-slate-500 hover:text-slate-300 flex items-center gap-1.5 list-none">
+              <span className="inline-block transition-transform group-open:rotate-90">▶</span>
+              開發者資訊
+            </summary>
+            <div className="mt-3 space-y-2 text-xs text-slate-500">
+              <p>
+                更新資料：在專案根目錄執行{" "}
+                <code className="rounded bg-slate-800/80 px-1 py-0.5 text-slate-400">
+                  python main.py score &amp;&amp; python main.py export
+                </code>
+                ，完成後重新整理頁面。
+              </p>
+              <p>
+                因子權重設定見{" "}
+                <code className="rounded bg-slate-800/80 px-1 py-0.5 text-slate-400">config.py</code>
+                ，Regime 門檻見{" "}
+                <code className="rounded bg-slate-800/80 px-1 py-0.5 text-slate-400">config.RegimeThresholds</code>
+                ，權重 JSON 見{" "}
+                <code className="rounded bg-slate-800/80 px-1 py-0.5 text-slate-400">output/web/factor_weights.json</code>。
+              </p>
+              <p className="text-slate-600">僅供研究用途，不構成任何投資建議。</p>
+            </div>
+          </details>
+        </footer>
       </div>
     </main>
   );

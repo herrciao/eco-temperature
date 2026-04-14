@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Growth 權重計算器</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a2332;
+      --text: #e7ecf3;
+      --muted: #8b9cb3;
+      --accent: #38bdf8;
+      --bad: #f87171;
+      --ok: #4ade80;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 1rem 1.25rem 2rem;
+      line-height: 1.5;
+    }
+    h1 { font-size: 1.35rem; font-weight: 600; margin: 0 0 0.5rem; }
+    .sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
+    .grid { display: grid; gap: 1rem; max-width: 960px; }
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .row { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.65rem; }
+    .row label { min-width: 140px; font-size: 0.88rem; }
+    .row input[type="range"] { flex: 1; min-width: 160px; }
+    .val { min-width: 48px; text-align: right; font-variant-numeric: tabular-nums; color: var(--accent); }
+    .sum { font-weight: 600; margin-top: 0.5rem; }
+    .sum.bad { color: var(--bad); }
+    .sum.ok { color: var(--ok); }
+    button {
+      background: var(--accent);
+      color: #0f1419;
+      border: none;
+      padding: 0.55rem 1.1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 0.5rem;
+      margin-top: 0.35rem;
+    }
+    button.secondary { background: #334155; color: var(--text); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    input[type="date"], input[type="file"] { color: var(--text); background: #334155; border: 1px solid #475569; border-radius: 6px; padding: 0.35rem 0.5rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 0.5rem; }
+    th, td { text-align: left; padding: 0.35rem 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.75rem; }
+    .metric { background: rgba(0,0,0,0.2); padding: 0.5rem 0.65rem; border-radius: 8px; }
+    .metric b { display: block; color: var(--muted); font-size: 0.75rem; font-weight: 500; }
+    #chartWrap { position: relative; height: 320px; margin-top: 0.75rem; }
+    .warn { color: var(--bad); font-size: 0.85rem; margin-top: 0.5rem; }
+    .okmsg { color: var(--ok); font-size: 0.85rem; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <h1>Growth 權重計算器</h1>
+  <p class="sub">
+    調整五個子因子權重（加總須為 1），按「計算」重算 growth_score、Regime、宏觀溫度與 IC。
+    資料來自 <code>research/output/calculator_data.json</code>（請先執行 <code>python research/export_calculator_data.py</code>）。
+  </p>
+
+  <div class="grid">
+    <div class="card">
+      <strong>載入資料</strong>
+      <p class="sub" style="margin:0.5rem 0 0.35rem">若用瀏覽器直接開本檔（file://），請用下方選擇 JSON；或在 <code>research/</code> 目錄執行 <code>python -m http.server 8765</code> 後開 <code>http://localhost:8765/calculator.html</code> 可自動載入同目錄 JSON。</p>
+      <input type="file" id="fileIn" accept=".json,application/json" />
+      <p id="loadStatus" class="sub" style="margin-top:0.5rem"></p>
+    </div>
+
+    <div class="card" id="controls" style="opacity:0.5; pointer-events:none">
+      <div class="row"><label>銅價動能 z</label><input type="range" id="w0" min="0" max="60" step="5" value="20" /><span class="val" id="v0">0.20</span></div>
+      <div class="row"><label>BDRY z</label><input type="range" id="w1" min="0" max="60" step="5" value="20" /><span class="val" id="v1">0.20</span></div>
+      <div class="row"><label>非農變化 z</label><input type="range" id="w2" min="0" max="60" step="5" value="20" /><span class="val" id="v2">0.20</span></div>
+      <div class="row"><label>失業率趨勢（反向）z</label><input type="range" id="w3" min="0" max="60" step="5" value="15" /><span class="val" id="v3">0.15</span></div>
+      <div class="row"><label>耐久財 z</label><input type="range" id="w4" min="0" max="60" step="5" value="25" /><span class="val" id="v4">0.25</span></div>
+      <div class="sum" id="sumLine">合計：—</div>
+      <div class="row" style="margin-top:0.75rem">
+        <label>日期起</label>
+        <input type="date" id="d0" />
+        <label>日期迄</label>
+        <input type="date" id="d1" />
+      </div>
+      <button type="button" id="btnNorm">權重歸一化</button>
+      <button type="button" id="btnCalc">計算</button>
+    </div>
+
+    <div class="card" id="results" style="display:none">
+      <strong>結果（區間內）</strong>
+      <div class="metrics" id="metrics"></div>
+      <h3 style="font-size:0.95rem; margin:1rem 0 0.35rem">Regime 週數</h3>
+      <table id="regTable"><thead><tr><th>regime</th><th>週數</th></tr></thead><tbody></tbody></table>
+      <h3 style="font-size:0.95rem; margin:1rem 0 0.35rem">growth_score 走勢</h3>
+      <div id="chartWrap"><canvas id="chart"></canvas></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script>
+(function () {
+  let DATA = null;
+  let chart = null;
+
+  function $(id) { return document.getElementById(id); }
+
+  function setSlidersFromWeights(w) {
+    const keys = ["copper_mom3_z", "bdry_mom1_z", "nfp_change_z", "unrate_trend_inv_z", "durable_goods_z"];
+    keys.forEach(function (k, i) {
+      const pct = Math.round((w[k] != null ? w[k] : 0) * 100);
+      const stepped = Math.round(pct / 5) * 5;
+      $("w" + i).value = String(Math.min(60, Math.max(0, stepped)));
+      $("v" + i).textContent = (parseInt($("w" + i).value, 10) / 100).toFixed(2);
+    });
+    updateSum();
+  }
+
+  function readWeights() {
+    const w = [];
+    for (let i = 0; i < 5; i++) w.push(parseInt($("w" + i).value, 10) / 100);
+    return w;
+  }
+
+  function updateSum() {
+    const w = readWeights();
+    const s = w.reduce((a, b) => a + b, 0);
+    const el = $("sumLine");
+    el.textContent = "合計：" + s.toFixed(2) + (Math.abs(s - 1) < 0.001 ? " ✓" : "（須為 1.00）");
+    el.className = "sum " + (Math.abs(s - 1) < 0.001 ? "ok" : "bad");
+    $("btnCalc").disabled = Math.abs(s - 1) >= 0.001;
+  }
+
+  for (let i = 0; i < 5; i++) {
+    $("w" + i).addEventListener("input", function () {
+      $("v" + i).textContent = (parseInt($("w" + i).value, 10) / 100).toFixed(2);
+      updateSum();
+    });
+  }
+
+  $("btnNorm").addEventListener("click", function () {
+    const w = readWeights();
+    const s = w.reduce(function (a, b) { return a + b; }, 0);
+    if (s <= 0) return;
+    for (let i = 0; i < 5; i++) {
+      let pct = Math.round((w[i] / s) * 100);
+      pct = Math.round(pct / 5) * 5;
+      $("w" + i).value = String(Math.min(60, Math.max(0, pct)));
+      $("v" + i).textContent = (parseInt($("w" + i).value, 10) / 100).toFixed(2);
+    }
+    updateSum();
+  });
+
+  function tanh(x) { return Math.tanh(x); }
+
+  function classifyRegime(g, inf, liq, gd, thr) {
+    if (g > thr.growth_high && inf > thr.inflation_high) return "overheating";
+    if (g > thr.growth_high && inf <= thr.inflation_high) return "expansion";
+    if (g < 0 && inf > thr.inflation_high) return "stagflation_risk";
+    if (g < thr.growth_low && liq < thr.liquidity_low) return "contraction";
+    if (thr.recovery_growth_min < g && g <= thr.growth_high && gd > 0) return "recovery";
+    return "neutral";
+  }
+
+  function computeSeries(weights, rows, rw, thr) {
+    const n = rows.length;
+    const growth = new Array(n);
+    const risk = new Array(n);
+    const temp = new Array(n);
+    const regime = new Array(n);
+    const gdelta = new Array(n);
+
+    for (let i = 0; i < n; i++) {
+      const z = rows[i].z;
+      let raw = 0;
+      for (let j = 0; j < 5; j++) raw += weights[j] * z[j];
+      growth[i] = tanh(raw / 2);
+    }
+    for (let i = 0; i < n; i++) {
+      const gd = i >= 4 ? growth[i] - growth[i - 4] : 0;
+      gdelta[i] = gd;
+      const inf = rows[i].inf;
+      const liq = rows[i].liq;
+      const curve = rows[i].curve;
+      const rLin = rw.growth * growth[i] + rw.inflation_inv * (-inf) + rw.liquidity * liq;
+      const curveT = tanh(curve * 2);
+      const cb = rw.curve_boost != null ? rw.curve_boost : 0.1;
+      risk[i] = tanh(rLin + cb * curveT);
+      const blend = growth[i] - 0.5 * inf + 0.5 * liq + 0.5 * risk[i];
+      temp[i] = Math.min(100, Math.max(0, ((tanh(blend) + 1) / 2) * 100));
+      regime[i] = classifyRegime(growth[i], inf, liq, gd, thr);
+    }
+    return { growth, risk, temp, regime, gdelta };
+  }
+
+  function rankAverage(arr) {
+    const n = arr.length;
+    const ix = arr.map((v, i) => ({ v, i })).sort((a, b) => a.v - b.v);
+    const ranks = new Array(n);
+    let a = 0;
+    while (a < n) {
+      let b = a;
+      while (b < n && ix[b].v === ix[a].v) b++;
+      const rk = (a + b + 1) / 2;
+      for (let k = a; k < b; k++) ranks[ix[k].i] = rk;
+      a = b;
+    }
+    return ranks;
+  }
+
+  function spearman(xs, ys) {
+    const n = xs.length;
+    if (n < 4) return NaN;
+    const rx = rankAverage(xs);
+    const ry = rankAverage(ys);
+    let mx = 0, my = 0;
+    for (let i = 0; i < n; i++) { mx += rx[i]; my += ry[i]; }
+    mx /= n; my /= n;
+    let num = 0, dx = 0, dy = 0;
+    for (let i = 0; i < n; i++) {
+      const a = rx[i] - mx, b = ry[i] - my;
+      num += a * b; dx += a * a; dy += b * b;
+    }
+    if (dx === 0 || dy === 0) return NaN;
+    return num / Math.sqrt(dx * dy);
+  }
+
+  function pearson(a, b) {
+    const n = a.length;
+    if (n < 2) return NaN;
+    let mx = 0, my = 0;
+    for (let i = 0; i < n; i++) { mx += a[i]; my += b[i]; }
+    mx /= n; my /= n;
+    let sxx = 0, syy = 0, sxy = 0;
+    for (let i = 0; i < n; i++) {
+      const dx = a[i] - mx, dy = b[i] - my;
+      sxx += dx * dx; syy += dy * dy; sxy += dx * dy;
+    }
+    if (sxx === 0 || syy === 0) return NaN;
+    return sxy / Math.sqrt(sxx * syy);
+  }
+
+  function spyFwd4(rows, i) {
+    if (i + 4 >= rows.length) return null;
+    const p0 = rows[i].spy;
+    const p4 = rows[i + 4].spy;
+    if (p0 == null || p4 == null || !(p0 > 0) || !(p4 > 0)) return null;
+    return p4 / p0 - 1;
+  }
+
+  function runCalc() {
+    if (!DATA) return;
+    const w = readWeights();
+    if (Math.abs(w.reduce((a, b) => a + b, 0) - 1) >= 0.001) return;
+
+    const rows = DATA.rows;
+    const rw = DATA.riskWeights;
+    const thr = DATA.regimeThresholds;
+    const series = computeSeries(w, rows, rw, thr);
+
+    const t0 = $("d0").value;
+    const t1 = $("d1").value;
+    const ix = [];
+    for (let i = 0; i < rows.length; i++) {
+      const week = rows[i].week;
+      if (week >= t0 && week <= t1) ix.push(i);
+    }
+
+    const fwd = [];
+    const gForIc = [];
+    for (const i of ix) {
+      const f = spyFwd4(rows, i);
+      if (f != null && !isNaN(f)) {
+        fwd.push(f);
+        gForIc.push(series.growth[i]);
+      }
+    }
+    const ic = spearman(gForIc, fwd);
+
+    const pairG = [];
+    const pair0 = [];
+    let meanAbs = 0;
+    let nma = 0;
+    for (const i of ix) {
+      if (rows[i].g0 == null || isNaN(rows[i].g0)) continue;
+      pairG.push(series.growth[i]);
+      pair0.push(rows[i].g0);
+      meanAbs += Math.abs(series.growth[i] - rows[i].g0);
+      nma++;
+    }
+    if (nma) meanAbs /= nma;
+    const pDiff = pairG.length >= 2 ? pearson(pairG, pair0) : NaN;
+
+    const regCount = {};
+    for (const i of ix) {
+      const r = series.regime[i];
+      regCount[r] = (regCount[r] || 0) + 1;
+    }
+
+    let tmin = Infinity, tmax = -Infinity, tsum = 0;
+    for (const i of ix) {
+      const t = series.temp[i];
+      tmin = Math.min(tmin, t);
+      tmax = Math.max(tmax, t);
+      tsum += t;
+    }
+    const tmean = ix.length ? tsum / ix.length : NaN;
+
+    const m = $("metrics");
+    m.innerHTML = ""
+      + metric("Spearman IC", "growth vs SPY 前瞻 4w", isNaN(ic) ? "—" : ic.toFixed(4))
+      + metric("與面板 growth 差異", "Pearson 相關", isNaN(pDiff) ? "—" : pDiff.toFixed(4))
+      + metric("與面板 growth 差異", "平均 |Δ|", isNaN(meanAbs) ? "—" : meanAbs.toFixed(4))
+      + metric("宏觀溫度", "區間平均", isNaN(tmean) ? "—" : tmean.toFixed(2))
+      + metric("宏觀溫度", "min / max", isNaN(tmean) ? "—" : tmin.toFixed(2) + " / " + tmax.toFixed(2));
+
+    const tb = $("regTable").querySelector("tbody");
+    tb.innerHTML = "";
+    Object.keys(regCount).sort().forEach(function (k) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = "<td>" + k + "</td><td>" + regCount[k] + "</td>";
+      tb.appendChild(tr);
+    });
+
+    const labels = ix.map((i) => rows[i].week);
+    const ds0 = ix.map((i) => (rows[i].g0 != null ? rows[i].g0 : null));
+    const ds1 = ix.map((i) => series.growth[i]);
+
+    const ctx = $("chart").getContext("2d");
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [
+          { label: "自訂權重 growth_score", data: ds1, borderColor: "#38bdf8", tension: 0.1, spanGaps: true, pointRadius: 0 },
+          { label: "面板 baseline growth_score", data: ds0, borderColor: "#94a3b8", borderDash: [4, 4], tension: 0.1, spanGaps: true, pointRadius: 0 },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: "#e7ecf3" } } },
+        scales: {
+          x: { ticks: { color: "#8b9cb3", maxTicksLimit: 12 }, grid: { color: "rgba(255,255,255,0.06)" } },
+          y: { ticks: { color: "#8b9cb3" }, grid: { color: "rgba(255,255,255,0.06)" }, suggestedMin: -1, suggestedMax: 1 },
+        },
+      },
+    });
+
+    $("results").style.display = "block";
+  }
+
+  function metric(title, sub, val) {
+    return '<div class="metric"><b>' + title + " · " + sub + "</b>" + val + "</div>";
+  }
+
+  function onDataLoaded(payload) {
+    DATA = payload;
+    $("controls").style.opacity = "1";
+    $("controls").style.pointerEvents = "auto";
+    $("loadStatus").textContent = "已載入 " + payload.rows.length + " 週。";
+    $("loadStatus").className = "sub okmsg";
+    if (payload.defaultWeights) setSlidersFromWeights(payload.defaultWeights);
+    const weeks = payload.rows.map(function (r) { return r.week; });
+    $("d0").value = weeks[0];
+    $("d1").value = weeks[weeks.length - 1];
+    updateSum();
+  }
+
+  $("fileIn").addEventListener("change", function (e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = function () {
+      try {
+        onDataLoaded(JSON.parse(r.result));
+      } catch (err) {
+        $("loadStatus").textContent = "JSON 解析失敗：" + err.message;
+        $("loadStatus").className = "sub warn";
+      }
+    };
+    r.readAsText(f);
+  });
+
+  $("btnCalc").addEventListener("click", runCalc);
+
+  fetch("output/calculator_data.json")
+    .then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(onDataLoaded)
+    .catch(function () {
+      $("loadStatus").innerHTML =
+        "無法自動載入 JSON（常見於 file://）。請用「選擇檔案」載入 <code>research/output/calculator_data.json</code>，或使用本目錄 <code>python -m http.server 8765</code> 後開啟本頁。";
+      $("loadStatus").className = "sub warn";
+    });
+})();
+  </script>
+</body>
+</html>

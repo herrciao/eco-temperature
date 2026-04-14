@@ -1,5 +1,18 @@
 import type { ReactNode } from "react";
-import type { CurrentRecord } from "@/lib/types";
+import type { CurrentRecord, PanelRow } from "@/lib/types";
+import {
+  delta4wNarrative,
+  factorNarrative,
+  findSimilarHistoricalWeek,
+  inflationVerdict,
+  liquidityVerdict,
+  panelScoreSeries,
+  percentileRank,
+  riskVerdict,
+  scoreVerdict,
+  type ScoreKey,
+} from "@/lib/interpretation";
+import { nearestMarketEventLabel } from "@/lib/events";
 import {
   GROWTH_COMPONENTS,
   INFLATION_COMPONENTS,
@@ -152,12 +165,24 @@ function FactorDetails({ keys }: { keys: string[] }) {
   );
 }
 
+function verdictForFactor(
+  kind: "growth" | "inflation" | "liquidity" | "risk",
+  score: number | null
+) {
+  if (kind === "inflation") return inflationVerdict(score);
+  if (kind === "liquidity") return liquidityVerdict(score);
+  if (kind === "risk") return riskVerdict(score);
+  return scoreVerdict(score);
+}
+
 function FactorCard({
   title,
   titleZh,
   scoreKey,
+  factorKind,
   current,
   delta4w,
+  panel,
   children,
   accentBorder,
   weightStack,
@@ -165,20 +190,23 @@ function FactorCard({
   narrativeParagraphs,
   detailKeys,
   footerHint,
+  topComponents,
 }: {
   title: string;
   titleZh: string;
   scoreKey: keyof CurrentRecord;
+  factorKind: "growth" | "inflation" | "liquidity" | "risk";
   current: CurrentRecord;
   delta4w: number | null;
   children: ReactNode;
   accentBorder: string;
   weightStack?: ReactNode;
-  /** 權重一句話（與 config.py / 堆疊條一致） */
   weightSummaryLine: string;
   narrativeParagraphs: string[];
   detailKeys: string[];
   footerHint: string;
+  panel: PanelRow[];
+  topComponents: { label: string; z: number | null }[];
 }) {
   const raw = current[scoreKey];
   const score =
@@ -189,18 +217,52 @@ function FactorCard({
       ? null
       : `${d >= 0 ? "+" : ""}${d.toFixed(3)}`;
 
+  const sk = scoreKey as ScoreKey;
+  const hist = panelScoreSeries(panel, sk);
+  const pct =
+    score != null && !Number.isNaN(score) && hist.length > 0
+      ? percentileRank(score, hist)
+      : null;
+
+  const verdict = verdictForFactor(factorKind, score);
+  const deltaPhrase = delta4wNarrative(d);
+  const narrative = factorNarrative(factorKind, score, topComponents);
+
+  const similar =
+    score != null && !Number.isNaN(score)
+      ? findSimilarHistoricalWeek(panel, sk, score)
+      : null;
+  const eventNote = similar ? nearestMarketEventLabel(similar.week) : null;
+  const anchorLine =
+    similar != null
+      ? `歷史錨點：${similar.week.slice(0, 7)} 附近數值接近（±約 ${similar.distance.toFixed(2)}）${eventNote ? ` — ${eventNote}` : ""}`
+      : null;
+
   return (
     <div
       className={`rounded-2xl border bg-slate-900/50 p-4 ring-1 ring-slate-800 ${accentBorder}`}
     >
-      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-        <div>
-          <h3 className="text-sm font-semibold text-slate-200">{titleZh}</h3>
-          <p className="text-[10px] uppercase tracking-wider text-slate-500">
-            {title}
+      {/* 卡片頂部：標題、verdict、分數、白話解讀 */}
+      <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
+            <h3 className="text-sm font-semibold text-slate-200">{titleZh}</h3>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500">{title}</p>
+            <span
+              className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${verdict.textClass} bg-slate-800/90 ring-1 ring-slate-600/60`}
+            >
+              {verdict.label}
+            </span>
+          </div>
+          {/* 白話解讀 — 預設可見 */}
+          <p className="text-sm font-medium text-slate-200 leading-snug">
+            {narrative.oneLiner}
+          </p>
+          <p className="mt-0.5 text-xs leading-relaxed text-slate-400">
+            {narrative.detail}
           </p>
         </div>
-        <div className="text-right">
+        <div className="text-right shrink-0">
           <p className="font-mono text-2xl font-semibold tabular-nums text-white">
             {fmt3(score)}
           </p>
@@ -210,26 +272,50 @@ function FactorCard({
                 deltaStr.startsWith("+") ? "text-emerald-400" : "text-rose-400"
               }`}
             >
-              4W {deltaStr}
+              {deltaStr.startsWith("+") ? "↑" : "↓"} {deltaStr}
+              {deltaPhrase ? (
+                <span className="ml-1 font-sans text-[10px] text-slate-500">
+                  · {deltaPhrase}
+                </span>
+              ) : null}
+            </p>
+          )}
+          {pct != null && (
+            <p className="mt-1 text-[10px] text-slate-500">
+              歷史 {pct.toFixed(0)}th 百分位
             </p>
           )}
         </div>
       </div>
-      <p className="mb-2 text-[11px] leading-relaxed text-slate-500">
-        {weightSummaryLine}
-      </p>
+
+      {/* 權重堆疊條 — 視覺直覺，保留 */}
       {weightStack}
-      <div className="space-y-3 border-t border-slate-800/80 pt-3">{children}</div>
-      <div className="mt-3 space-y-1.5 text-[11px] leading-relaxed text-slate-400">
-        {narrativeParagraphs.map((p, i) => (
-          <p key={i}>{p}</p>
-        ))}
-        <p className="text-slate-500">
-          僅供研究檢視，不構成投資建議。
-        </p>
-      </div>
-      <FactorDetails keys={detailKeys} />
-      <p className="mt-3 text-[10px] leading-snug text-slate-500">{footerHint}</p>
+
+      {/* 模型細節：預設收合 */}
+      <details className="mt-3 group">
+        <summary className="cursor-pointer select-none text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1.5 list-none">
+          <span className="inline-block transition-transform group-open:rotate-90">▶</span>
+          模型細節
+        </summary>
+        <div className="mt-3 space-y-4 border-t border-slate-800/80 pt-3">
+          <p className="text-[11px] leading-relaxed text-slate-500">{weightSummaryLine}</p>
+          <div className="space-y-3">{children}</div>
+          <div className="space-y-1.5 text-[11px] leading-relaxed text-slate-400">
+            {narrativeParagraphs.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+          {anchorLine && (
+            <p className="text-[10px] leading-snug text-slate-500">{anchorLine}</p>
+          )}
+          <FactorDetails keys={detailKeys} />
+          <p className="text-[10px] leading-snug text-slate-500">{footerHint}</p>
+        </div>
+      </details>
+
+      <p className="mt-3 text-[10px] leading-snug text-slate-500">
+        僅供研究檢視，不構成投資建議。
+      </p>
     </div>
   );
 }
@@ -237,24 +323,42 @@ function FactorCard({
 export function FactorCards({
   current,
   deltas,
+  panel,
 }: {
   current: CurrentRecord;
   deltas: ScoreDeltas;
+  panel: PanelRow[];
 }) {
+  const growthTopComponents = GROWTH_COMPONENTS.map((c) => ({
+    label: c.label,
+    z: componentValue(current, c.key),
+  }));
+  const inflationTopComponents = INFLATION_COMPONENTS.map((c) => ({
+    label: c.label,
+    z: componentValue(current, c.key),
+  }));
+  const liquidityTopComponents = LIQUIDITY_COMPONENTS.map((c) => ({
+    label: c.label,
+    z: componentValue(current, c.key),
+  }));
+  const riskTopComponents = RISK_DRIVERS.map((row) => ({
+    label: row.label,
+    z: riskDriverValue(row, current),
+  }));
+
   return (
     <section className="space-y-3">
-      <h2 className="text-lg font-semibold text-slate-100">因子拆解</h2>
+      <h2 className="text-lg font-semibold text-slate-100">四維因子拆解</h2>
       <p className="text-sm text-slate-400">
-        各分數由下列 z-score（或風險貢獻項）加權後經 tanh 壓縮；長條中央為 0。權重與後端{" "}
-        <span className="font-mono text-slate-500">config.py</span> 一致；亦可見{" "}
-        <span className="font-mono text-slate-500">output/web/factor_weights.json</span>{" "}
-        （執行 <span className="font-mono text-slate-500">python main.py export</span> 後產生）。
+        各維度分數反映宏觀環境的成長、通膨、流動性與風險偏好狀態。展開「模型細節」可查看子項訊號與計算邏輯。
       </p>
       <div className="grid gap-4 md:grid-cols-2">
         <FactorCard
           title="Growth"
           titleZh="成長"
           scoreKey="growth_score"
+          factorKind="growth"
+          panel={panel}
           current={current}
           delta4w={deltas.growth_score}
           accentBorder="border-l-4 border-l-emerald-500/80"
@@ -263,6 +367,7 @@ export function FactorCards({
           narrativeParagraphs={zCompositeNarrativeParagraphs(GROWTH_COMPONENTS)}
           detailKeys={GROWTH_COMPONENTS.map((c) => c.key)}
           footerHint="橫軸為各子項 z-score（約 ±2）；中央為 0。"
+          topComponents={growthTopComponents}
         >
           {GROWTH_COMPONENTS.map((c) => (
             <ZBar
@@ -279,6 +384,8 @@ export function FactorCards({
           title="Inflation"
           titleZh="通膨壓力"
           scoreKey="inflation_score"
+          factorKind="inflation"
+          panel={panel}
           current={current}
           delta4w={deltas.inflation_score}
           accentBorder="border-l-4 border-l-orange-500/80"
@@ -287,6 +394,7 @@ export function FactorCards({
           narrativeParagraphs={zCompositeNarrativeParagraphs(INFLATION_COMPONENTS)}
           detailKeys={INFLATION_COMPONENTS.map((c) => c.key)}
           footerHint="橫軸為各子項 z-score（約 ±2）；中央為 0。"
+          topComponents={inflationTopComponents}
         >
           {INFLATION_COMPONENTS.map((c) => (
             <ZBar
@@ -303,6 +411,8 @@ export function FactorCards({
           title="Liquidity"
           titleZh="流動性"
           scoreKey="liquidity_score"
+          factorKind="liquidity"
+          panel={panel}
           current={current}
           delta4w={deltas.liquidity_score}
           accentBorder="border-l-4 border-l-sky-500/80"
@@ -311,6 +421,7 @@ export function FactorCards({
           narrativeParagraphs={zCompositeNarrativeParagraphs(LIQUIDITY_COMPONENTS)}
           detailKeys={LIQUIDITY_COMPONENTS.map((c) => c.key)}
           footerHint="橫軸為各子項 z-score（約 ±2）；中央為 0。"
+          topComponents={liquidityTopComponents}
         >
           {LIQUIDITY_COMPONENTS.map((c) => (
             <ZBar
@@ -327,6 +438,8 @@ export function FactorCards({
           title="Risk"
           titleZh="風險偏好"
           scoreKey="risk_score"
+          factorKind="risk"
+          panel={panel}
           current={current}
           delta4w={deltas.risk_score}
           accentBorder="border-l-4 border-l-violet-500/80"
@@ -335,6 +448,7 @@ export function FactorCards({
           narrativeParagraphs={RISK_FORMULA_PARAGRAPHS}
           detailKeys={RISK_DRIVERS.map((r) => r.key)}
           footerHint="橫軸為貢獻項數值（約 ±1）；曲線項先 tanh 再納入加總。"
+          topComponents={riskTopComponents}
         >
           {RISK_DRIVERS.map((row) => (
             <RiskBar

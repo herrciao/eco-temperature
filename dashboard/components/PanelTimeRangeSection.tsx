@@ -212,13 +212,21 @@ export function PanelTimeRangeSection({
         </div>
       </section>
 
-      <TemperatureChart panel={visiblePanel} />
+      <TemperatureChart
+        panel={visiblePanel}
+        fullPanel={panel}
+        events={visibleEvents}
+      />
 
       <RegimeTimeline panel={visiblePanel} />
 
       <SpyChart panel={visiblePanel} events={visibleEvents} />
 
-      <ScoresChart panel={visiblePanel} events={visibleEvents} />
+      <ScoresChart
+        panel={visiblePanel}
+        fullPanel={panel}
+        events={visibleEvents}
+      />
     </div>
   );
 }
