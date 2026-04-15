@@ -23,6 +23,7 @@
 14. [Next.js 看板 UI 閱讀指南](#14-nextjs-看板-ui-閱讀指南)
 15. [研究工具記錄](#15-研究工具記錄)
 16. [擴展指南](#16-擴展指南)
+17. [更新日誌](#更新日誌)
 
 ---
 
@@ -783,6 +784,35 @@ Growth x 0.34 - Inflation x 0.33 + Liquidity x 0.33 + 0.1 x tanh(curve_steepenin
 8. 解讀段落（依 Regime 切換）
 9. 圖表閱讀指南
 10. 免責聲明
+
+---
+
+## 更新日誌
+
+### 2026-04-15
+
+**supply_chain_pulse.html — 供應鏈傳導儀表板**
+
+1. **修復動能橫條 overflow**
+   - `.mom-bar-track` 加入 `overflow:hidden`，杜絕橫條超出容器
+   - `.mom-bar-fill` 加入 `max-width:50%`，防止浮點誤差造成最大值那根越界
+   - `.mom-bar-name` 加入 `white-space:nowrap` + `text-overflow:ellipsis`，避免標籤文字把整排推壞
+   - `.mom-bar-row` 加入 `min-width:0`，確保 flex 子元素正確壓縮
+
+2. **新增指數組成說明補充欄（ⓘ 按鈕 → Modal）**
+   - 在每個**供應鏈籃子**名稱旁加上小圓形 `ⓘ` 按鈕（共 7 個籃子）
+   - 在每個**需求指數卡片**加上 `ⓘ` 按鈕（消費電子 / 雲端 / AI 算力共 3 個）
+   - 點擊開啟深色 Modal，包含：成份股代碼、名稱、權重、說明；加權方式；指數計算公式；資料來源
+   - 支援三種關閉方式：✕ 按鈕 / Esc / 點外側背景
+
+3. **新增 `BASKET_INFO` 資料結構（JS 常數）**
+   - 涵蓋 7 個供應鏈籃子的完整組成說明
+   - 台灣晶圓代工（2330.TW / 2303.TW / 6488.TW）、AI/IC 設計（2454.TW / 3034.TW / 2379.TW / 4966.TW）、AI 伺服器（2382.TW / 6669.TW / 3711.TW）、雲端伺服器（2382.TW / 2317.TW / 2324.TW / 3231.TW）、散熱&電源（3017.TW / 2308.TW / 6669.TW）、記憶體（2408.TW / 2344.TW / 3054.TW）、美國電力基礎設施（NEE / VST / CEG / XLU）
+
+4. **新增 `DEMAND_INFO` 資料結構（JS 常數）**
+   - 涵蓋 3 個需求指數的完整組成說明
+   - 消費電子（AAPL 100%）、雲端超大規模（MSFT / GOOGL / AMZN / META 各 25%）、AI 算力（NVDA ~80% / AMD ~20% 市值動態加權）
+   - 每個指數附完整 Pulse 計算公式（mom_13w → rolling z-score → tanh 壓縮至 0–100）
 
 ---
 
