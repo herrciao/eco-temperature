@@ -52,12 +52,22 @@ cd dashboard && npm run dev`}
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-100 md:px-8">
       <div className="mx-auto max-w-6xl space-y-10">
         <header>
-          <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
-            宏觀溫度看板
-          </h1>
-          <p className="mt-1 text-sm text-slate-400">
-            整合成長、通膨、流動性與風險偏好，提供宏觀環境的一站式概覽。
-          </p>
+          <div className="flex items-start justify-between flex-wrap gap-3">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
+                宏觀溫度看板
+              </h1>
+              <p className="mt-1 text-sm text-slate-400">
+                整合成長、通膨、流動性與風險偏好，提供宏觀環境的一站式概覽。
+              </p>
+            </div>
+            <a
+              href="/supply-chain"
+              className="rounded-xl border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm text-sky-300 hover:bg-sky-500/20 transition-colors"
+            >
+              供應鏈傳導系統 →
+            </a>
+          </div>
         </header>
 
         <RegimeHero current={data.current} deltas={deltas} />

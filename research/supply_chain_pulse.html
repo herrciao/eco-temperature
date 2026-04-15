@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>US Tech Demand Pulse — 台灣供應鏈傳導系統</title>
+  <style>
+    :root {
+      --bg: #0f1419; --card: #1a2332; --card2: #1e2a3d;
+      --text: #e7ecf3; --muted: #8b9cb3; --border: rgba(255,255,255,0.06);
+      --accent: #38bdf8; --green: #4ade80; --orange: #f59e0b;
+      --purple: #8b5cf6; --red: #f87171; --slate: #475569;
+      --us-lead: #4ade80; --tw-lead: #f59e0b; --sync: #8b5cf6; --weak: #334155;
+    }
+    *{box-sizing:border-box;margin:0}
+    body{font-family:ui-sans-serif,system-ui,"Segoe UI",Roboto,"Noto Sans TC",sans-serif;
+      background:var(--bg);color:var(--text);padding:1.25rem 1.5rem 3rem;line-height:1.6}
+    h1{font-size:1.5rem;font-weight:700}
+    h2{font-size:1.05rem;font-weight:600;color:var(--accent);margin-bottom:.75rem}
+    .sub{color:var(--muted);font-size:.85rem;margin-bottom:1.25rem}
+    .container{max-width:1200px;margin:0 auto}
+    .card{background:var(--card);border-radius:12px;padding:1.25rem;
+      border:1px solid var(--border);margin-bottom:1.25rem}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem}
+    @media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+
+    /* Header bar */
+    .header-bar{display:flex;justify-content:space-between;align-items:flex-start;
+      margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem}
+    .data-date{font-size:.8rem;color:var(--muted);text-align:right}
+
+    /* Theme badge */
+    .theme-badge{display:inline-block;padding:.3rem .85rem;border-radius:20px;
+      font-size:.85rem;font-weight:700;margin-bottom:.5rem}
+
+    /* Demand pulse cards */
+    .pulse-card{background:var(--card2);border-radius:10px;padding:1rem;
+      border:1px solid var(--border)}
+    .pulse-card .label{font-size:.78rem;color:var(--muted);margin-bottom:.35rem}
+    .pulse-card .score{font-size:1.8rem;font-weight:700}
+    .pulse-card .score-label{font-size:.8rem;color:var(--muted);margin-left:.3rem}
+    .pulse-bar-track{background:#1e293b;border-radius:4px;height:6px;margin-top:.5rem}
+    .pulse-bar-fill{height:6px;border-radius:4px;transition:width .3s}
+
+    /* Lead-lag matrix */
+    .matrix-table{width:100%;border-collapse:collapse;font-size:.8rem}
+    .matrix-table th{padding:.4rem .5rem;text-align:center;color:var(--muted);
+      font-weight:500;border-bottom:1px solid var(--border)}
+    .matrix-table td{padding:.35rem .5rem;text-align:center;border-bottom:1px solid rgba(255,255,255,.04)}
+    .matrix-table td.row-label{text-align:left;color:var(--muted);font-size:.75rem}
+    .cell-chip{display:inline-block;padding:.1rem .45rem;border-radius:4px;
+      font-weight:600;font-size:.78rem;font-variant-numeric:tabular-nums}
+
+    /* Backtest table */
+    .bt-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:.5rem}
+    .bt-table th{padding:.4rem .6rem;text-align:left;color:var(--muted);
+      font-weight:500;border-bottom:1px solid var(--border);white-space:nowrap}
+    .bt-table td{padding:.35rem .6rem;border-bottom:1px solid rgba(255,255,255,.04);
+      font-variant-numeric:tabular-nums}
+    .bt-table td.pos{color:var(--green)} .bt-table td.neg{color:var(--red)}
+    .bt-table tr:hover td{background:rgba(255,255,255,.03)}
+
+    /* Sticky time range card */
+    .time-range-card{
+      position:sticky;top:0;z-index:120;
+      background:rgba(26,35,50,.96);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:.85rem 1.25rem .75rem;
+      margin-bottom:1.25rem;
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    }
+    .range-preset{padding:.22rem .6rem;border-radius:6px;font-size:.78rem;cursor:pointer;
+      border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .15s}
+    .range-preset:hover{border-color:var(--accent);color:var(--accent)}
+    .range-preset.active{background:rgba(56,189,248,.15);color:var(--accent);border-color:var(--accent);font-weight:600}
+
+    /* Dual range slider */
+    .dual-range-wrap{position:relative;height:32px;margin:.4rem 0}
+    .range-track-bg{position:absolute;top:50%;transform:translateY(-50%);left:0;right:0;
+      height:5px;background:#1e293b;border-radius:3px;pointer-events:none}
+    .range-track-fill{position:absolute;top:50%;transform:translateY(-50%);
+      height:5px;background:rgba(56,189,248,.55);border-radius:3px;pointer-events:none}
+    .range-handle{position:absolute;left:0;top:0;width:100%;height:32px;
+      appearance:none;-webkit-appearance:none;background:transparent;
+      pointer-events:none;margin:0;padding:0}
+    .range-handle::-webkit-slider-thumb{
+      -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+      background:var(--accent);border:2.5px solid #0f1419;
+      cursor:pointer;pointer-events:all;transition:transform .1s}
+    .range-handle::-webkit-slider-thumb:hover{transform:scale(1.2)}
+    .range-handle::-moz-range-thumb{
+      width:16px;height:16px;border-radius:50%;
+      background:var(--accent);border:2.5px solid #0f1419;
+      cursor:pointer;pointer-events:all}
+
+    /* Shared select style */
+    .sc-select{background:#334155;color:var(--text);border:1px solid #475569;
+      border-radius:6px;padding:.3rem .65rem;font-size:.82rem;cursor:pointer;
+      appearance:none;-webkit-appearance:none;outline:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238b9cb3'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right .55rem center;padding-right:1.6rem;
+      transition:border-color .15s}
+    .sc-select:hover{border-color:var(--accent)}
+    .sc-select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.2)}
+    .sc-sel-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.75rem}
+    .sc-sel-row label{font-size:.8rem;color:var(--muted);white-space:nowrap}
+
+    /* Timeline strip */
+    .strip-wrap{height:36px;border-radius:8px;overflow:hidden;cursor:crosshair;position:relative;margin-bottom:.35rem}
+    .strip-label-row{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted)}
+
+    /* Charts */
+    .chart-wrap{position:relative;height:240px;margin-bottom:.5rem}
+    .chart-wrap.tall{height:300px}
+    canvas{width:100%!important;height:100%!important}
+
+    /* Basket momentum bar */
+    .mom-bar-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
+    .mom-bar-name{font-size:.8rem;min-width:120px;color:var(--text)}
+    .mom-bar-track{flex:1;background:#1e293b;border-radius:3px;height:8px;position:relative}
+    .mom-bar-fill{height:8px;border-radius:3px;position:absolute;top:0}
+    .mom-bar-val{font-size:.78rem;min-width:52px;text-align:right;
+      font-variant-numeric:tabular-nums}
+
+    /* Narrative blocks */
+    .narrative-list{display:flex;flex-direction:column;gap:.65rem}
+    .narrative-block{background:rgba(0,0,0,.2);border-radius:8px;
+      padding:.75rem .9rem;border-left:4px solid var(--slate)}
+    .narrative-block.us-lead{border-left-color:var(--us-lead)}
+    .narrative-block.tw-lead{border-left-color:var(--tw-lead)}
+    .narrative-block.sync{border-left-color:var(--sync)}
+    .narrative-block .period{font-size:.75rem;color:var(--muted);margin-bottom:.2rem}
+    .tag{display:inline-block;font-size:.7rem;font-weight:600;padding:.1rem .45rem;
+      border-radius:3px;margin-right:.4rem}
+    .tag.us{background:rgba(74,222,128,.15);color:var(--us-lead)}
+    .tag.tw{background:rgba(245,158,11,.15);color:var(--tw-lead)}
+    .tag.sy{background:rgba(139,92,246,.15);color:var(--sync)}
+    .tag.wk{background:rgba(71,85,105,.3);color:var(--muted)}
+    .narrative-body{font-size:.85rem;line-height:1.65;margin-top:.4rem}
+    /* r guide */
+    .r-guide{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);
+      border-radius:8px;padding:.7rem .9rem;margin-bottom:.85rem;font-size:.82rem;line-height:1.7}
+    .r-guide-title{font-weight:600;color:var(--accent);margin-bottom:.3rem;font-size:.83rem}
+    .r-scale{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.45rem}
+    .r-chip{display:inline-flex;align-items:center;gap:.3rem;padding:.15rem .55rem;
+      border-radius:4px;font-size:.75rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+    .r-chip .rc-pct{font-weight:700}
+
+    /* Amplifier chain */
+    .chain-node{background:var(--card2);border-radius:8px;padding:.75rem;
+      border:1px solid var(--border);position:relative}
+    .chain-node .cn-label{font-size:.82rem;font-weight:600;margin-bottom:.25rem}
+    .chain-node .cn-tickers{font-size:.72rem;color:var(--muted)}
+    .chain-node .cn-lag{font-size:.72rem;margin-top:.35rem;font-variant-numeric:tabular-nums}
+    .chain-arrow{display:flex;align-items:center;justify-content:center;
+      font-size:1.1rem;color:var(--accent);padding:.1rem 0}
+    .chain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.75rem}
+
+    /* Legend */
+    .legend{display:flex;gap:1.25rem;flex-wrap:wrap;font-size:.79rem;margin-bottom:.75rem}
+    .legend-item{display:flex;align-items:center;gap:.35rem}
+    .legend-dot{width:12px;height:12px;border-radius:2px;flex-shrink:0}
+
+    /* Load status */
+    #loadStatus{color:var(--muted);font-size:.85rem}
+    #loadStatus.ok{color:var(--green)} #loadStatus.err{color:var(--red)}
+
+    /* Tooltip */
+    #tooltip{position:fixed;background:#1e293b;border:1px solid #475569;border-radius:8px;
+      padding:.5rem .75rem;font-size:.78rem;pointer-events:none;opacity:0;
+      transition:opacity .12s;z-index:200;max-width:260px;line-height:1.5}
+    #tooltip.show{opacity:1}
+
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="header-bar">
+    <div>
+      <h1>US Tech Demand Pulse</h1>
+      <div class="sub">美國科技巨頭需求 → 台灣 / 亞洲供應鏈傳導系統</div>
+    </div>
+    <div class="data-date">
+      資料截止<br><b id="latestWeek">—</b>
+    </div>
+  </div>
+
+  <!-- ═══ STICKY TIME RANGE ═══ -->
+  <div class="time-range-card" id="timeRangeCard">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem">
+      <div>
+        <span style="font-size:.88rem;font-weight:600">時間範圍</span>
+        <span id="rangeInfo" style="font-size:.75rem;color:var(--muted);margin-left:.7rem">—</span>
+      </div>
+      <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+        <button class="range-preset active" data-years="3">最近 3 年</button>
+        <button class="range-preset" data-years="5">最近 5 年</button>
+        <button class="range-preset" data-years="0">全期間</button>
+      </div>
+    </div>
+    <div class="dual-range-wrap">
+      <div class="range-track-bg"></div>
+      <div class="range-track-fill" id="rangeTrackFill"></div>
+      <input type="range" class="range-handle" id="rangeL" min="0" max="100" value="0" />
+      <input type="range" class="range-handle" id="rangeR" min="0" max="100" value="100" />
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:.73rem;color:var(--muted)">
+      <span id="rangeStartLabel">—</span>
+      <span id="rangeEndLabel">—</span>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <div id="mainContent">
+
+    <!-- ── 0. Narrative timeline ── -->
+    <div class="card">
+      <h2>人話時間線</h2>
+      <!-- r 值解讀說明 -->
+      <div class="r-guide">
+        <div class="r-guide-title">📐 怎麼解讀 r 值？</div>
+        r 是相關係數（−1 到 +1），<b>不能直接當成「準確率」百分比</b>。<br>
+        但可以轉換成更直觀的 <b>同向機率</b>：當觀察指標往上（或往下），目標籃子在領先期後<b>跟著同向移動的機率</b>。<br>
+        公式：<code style="background:#1e293b;padding:.1rem .4rem;border-radius:4px">P = 50% + arcsin(r) / π × 100%</code>
+        <div class="r-scale">
+          <div class="r-chip">r = 0.3 → <span class="rc-pct" style="color:#8b9cb3">~60%</span> 同向</div>
+          <div class="r-chip">r = 0.5 → <span class="rc-pct" style="color:#f59e0b">~67%</span> 同向</div>
+          <div class="r-chip">r = 0.6 → <span class="rc-pct" style="color:#4ade80">~71%</span> 同向</div>
+          <div class="r-chip">r = 0.7 → <span class="rc-pct" style="color:#4ade80">~76%</span> 同向</div>
+          <div class="r-chip">r = 0.8 → <span class="rc-pct" style="color:#38bdf8">~80%</span> 同向</div>
+          <div class="r-chip">r = 1.0 → <span class="rc-pct" style="color:#38bdf8">100%</span> 同向</div>
+        </div>
+        <div style="margin-top:.4rem;font-size:.78rem;color:var(--muted)">
+          ⚠️ 同向機率只代表方向吻合的統計機率，不代表幅度相同，實際操作請搭配其他指標判斷。
+        </div>
+      </div>
+      <div class="sc-sel-row">
+        <label>需求主題</label>
+        <select id="narrativeDemandSel" class="sc-select"></select>
+        <label style="margin-left:.25rem">供應鏈籃子</label>
+        <select id="narrativeBasketSel" class="sc-select"></select>
+      </div>
+      <div class="narrative-list" id="narrativeList"></div>
+    </div>
+
+    <!-- ── 1. Demand pulse overview ── -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <h2>本週主題狀態</h2>
+          <div id="themeBadge" class="theme-badge" style="background:rgba(56,189,248,.15);color:var(--accent)">載入中...</div>
+        </div>
+        <div class="grid3" id="demandPulseCards" style="gap:.75rem;flex:1;max-width:700px"></div>
+      </div>
+    </div>
+
+    <!-- ── 2. Lead-Lag Matrix ── -->
+    <div class="grid2">
+      <div class="card">
+        <h2>最佳領先週數</h2>
+        <p class="sub" style="margin-bottom:.75rem">正值代表美股需求指數領先台灣供應鏈，負值代表台股先行</p>
+        <div id="lagMatrixWrap" style="overflow-x:auto"></div>
+      </div>
+      <div class="card">
+        <h2>最大相關係數</h2>
+        <p class="sub" style="margin-bottom:.75rem">組合值越大兩者動向越趨同強</p>
+        <div id="corrMatrixWrap" style="overflow-x:auto"></div>
+      </div>
+    </div>
+
+    <!-- ── 3. Time strip (multi-row) ── -->
+    <div class="card">
+      <h2>供應鏈主題時間色帶</h2>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--us-lead)"></div>美股領先台股</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--tw-lead)"></div>台股領先美股</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--sync)"></div>同步</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--weak)"></div>關聯弱</div>
+      </div>
+      <div class="sc-sel-row">
+        <label>需求主題</label>
+        <select id="stripDemandSel" class="sc-select"></select>
+        <label style="margin-left:.25rem">顯示籃子</label>
+        <select id="stripBasketFilter" class="sc-select"></select>
+      </div>
+      <div id="multiStrip"></div>
+    </div>
+
+    <!-- ── 4. Theme backtest table ── -->
+    <div class="card">
+      <h2>主題狀態回測結果</h2>
+      <p class="sub" style="margin-bottom:.75rem">各主題狀態觸發後，供應鏈籃子的歷史前瞻表現</p>
+      <div class="sc-sel-row">
+        <label>需求主題</label>
+        <select id="btDemandSel" class="sc-select"></select>
+        <label style="margin-left:.25rem">篩選籃子</label>
+        <select id="btBasketFilter" class="sc-select"></select>
+        <label style="margin-left:.25rem">Horizon</label>
+        <select id="btHorizon" class="sc-select">
+          <option value="4">4 週</option>
+          <option value="13" selected>13 週</option>
+          <option value="26">26 週</option>
+          <option value="52">52 週</option>
+        </select>
+      </div>
+      <div style="overflow-x:auto"><table class="bt-table" id="btTable"></table></div>
+    </div>
+
+    <!-- ── 5. Basket momentum ── -->
+    <div class="card">
+      <h2>供應鏈籃子近 13 週動能</h2>
+      <p class="sub" style="margin-bottom:.75rem">正值 = 向上動能，負值 = 向下動能</p>
+      <div id="basketMomBars"></div>
+    </div>
+
+    <!-- ── 6. Cumulative index chart ── -->
+    <div class="card">
+      <h2>供應鏈籃子累積指數（Base = 100）</h2>
+      <div class="chart-wrap tall"><canvas id="basketIndexChart"></canvas></div>
+    </div>
+
+    <!-- ── 7. Demand index chart ── -->
+    <div class="card">
+      <h2>美國科技需求脈衝指數（0–100）</h2>
+      <p class="sub" style="margin-bottom:.5rem">50 以上 = 偏強，50 以下 = 偏弱</p>
+      <div class="chart-wrap"><canvas id="demandPulseChart"></canvas></div>
+    </div>
+
+    <!-- ── 8. AI Amplifier Chain ── -->
+    <div class="card">
+      <h2>AI 算力需求傳導鏈</h2>
+      <p class="sub" style="margin-bottom:.75rem">從 NVDA 算力需求到電力基礎設施的完整傳導路徑。節點顏色 = 近期動能強度；數字 = 相對 NVDA 的平均領先/落後週數。</p>
+      <div class="legend" style="margin-bottom:1rem">
+        <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>強動能（近 13 週 +）</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>弱動能</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>負動能</div>
+        <div class="legend-item"><div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:3px;padding:0 .4rem;font-size:.72rem;color:var(--muted)">-6w</div> 落後 NVDA 6 週</div>
+      </div>
+      <div id="amplifierChain" style="overflow-x:auto;padding-bottom:.5rem"></div>
+    </div>
+
+  </div><!-- /mainContent -->
+
+  <!-- 進階：載入真實資料 -->
+  <div style="margin-top:2rem;border-top:1px solid rgba(255,255,255,.06);padding-top:1.25rem">
+    <details>
+      <summary style="cursor:pointer;font-size:.8rem;color:var(--muted);user-select:none;list-style:none;display:flex;align-items:center;gap:.4rem">
+        <span id="dataSourceLabel">▶ 目前顯示：示範資料</span>
+        <span style="opacity:.5">— 點此載入真實資料</span>
+      </summary>
+      <div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.75rem;align-items:center">
+        <input type="file" id="fileIn" accept=".json" style="background:#334155;color:var(--text);border:1px solid #475569;border-radius:6px;padding:.35rem .5rem;font-size:.82rem" />
+        <span style="font-size:.8rem;color:var(--muted)">或執行 <code style="background:#1e293b;padding:.1rem .35rem;border-radius:4px">python main.py supply-chain all</code> 產生後自動讀取</span>
+      </div>
+      <p id="loadStatus" style="margin-top:.4rem;font-size:.8rem;color:var(--muted)"></p>
+    </details>
+  </div>
+
+</div><!-- /container -->
+
+<div id="tooltip"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function() {
+"use strict";
+
+/* ─── State ─── */
+let DATA = null;
+let basketIndexChart = null, demandPulseChart = null;
+// time range (week indices into DATA.weeks)
+let rangeStart = 0, rangeEnd = 0;
+// strip
+let activeStripDemand = null;
+let activeStripBasket = "";   // "" = show all
+// backtest
+let activeBtDemand = null;
+let activeBtBasket = "";      // "" = show all
+let activeBtHorizon = 13;
+// narrative
+let activeNarrDemand = null, activeNarrBasket = null;
+
+const $ = id => document.getElementById(id);
+const tooltip = $("tooltip");
+
+/* ─── Color helpers ─── */
+const TYPE_COLOR = { us_lead:"#4ade80", tw_lead:"#f59e0b", sync:"#8b5cf6", weak:"#334155" };
+const DEMAND_COLORS = { consumer_electronics:"#38bdf8", cloud_hyperscaler:"#f59e0b", ai_compute:"#4ade80" };
+const BASKET_COLORS = ["#38bdf8","#4ade80","#f59e0b","#f87171","#8b5cf6","#fb923c","#a78bfa"];
+
+function demandLabel(k) {
+  return { consumer_electronics:"消費電子 (AAPL)", cloud_hyperscaler:"雲端超大規模", ai_compute:"AI 算力 (NVDA/AMD)" }[k] || k;
+}
+function basketLabel(k) { return DATA?.baskets?.[k]?.label || k; }
+
+/* ─── Demo data generator ─── */
+function generateDemoData() {
+  const startDate = new Date("2016-01-08");
+  const N = 470; // ~9 years
+  const weeks = [];
+  for (let i = 0; i < N; i++) {
+    const d = new Date(startDate); d.setDate(d.getDate() + i * 7);
+    weeks.push(d.toISOString().slice(0, 10));
+  }
+
+  // Demand indices (price-like, base 100)
+  function makeDemandIndex(phases) {
+    const idx = [100];
+    for (let i = 1; i < N; i++) {
+      const t = i / N;
+      let phase = phases[phases.length - 1];
+      for (const p of phases) { if (t < p.until) { phase = p; break; } }
+      const ret = phase.bias + (Math.random() - 0.5) * phase.vol;
+      idx.push(Math.max(1, idx[i-1] * (1 + ret)));
+    }
+    return idx;
+  }
+
+  // CE: steady, modest
+  const ceIdx = makeDemandIndex([
+    {until:.15, bias:.003, vol:.025},{until:.3, bias:-.004, vol:.03},
+    {until:.45, bias:.005, vol:.02},{until:.55, bias:-.02, vol:.04},
+    {until:.7, bias:.006, vol:.025},{until:.85, bias:-.003, vol:.03},
+    {until:1.1, bias:.004, vol:.022}
+  ]);
+  // Cloud: strong 2020+
+  const cloudIdx = makeDemandIndex([
+    {until:.2, bias:.004, vol:.022},{until:.35, bias:.002, vol:.025},
+    {until:.5, bias:-.015, vol:.04},{until:.65, bias:.009, vol:.025},
+    {until:.75, bias:.003, vol:.022},{until:.88, bias:-.005, vol:.032},
+    {until:1.1, bias:.008, vol:.023}
+  ]);
+  // AI: explosion post-2022
+  const aiIdx = makeDemandIndex([
+    {until:.25, bias:.003, vol:.03},{until:.4, bias:.002, vol:.028},
+    {until:.5, bias:-.018, vol:.05},{until:.6, bias:.006, vol:.03},
+    {until:.72, bias:.004, vol:.028},{until:.82, bias:-.006, vol:.04},
+    {until:1.1, bias:.015, vol:.04}
+  ]);
+
+  // Supply baskets: lagged versions
+  function makeLaggedBasket(sourceIdx, lagWeeks, noiseVol, beta) {
+    const ret = [];
+    for (let i = 1; i < N; i++) {
+      const src = Math.max(0, i - lagWeeks);
+      const baseRet = sourceIdx[src] > 0 ? (sourceIdx[Math.min(src+1, N-1)] / sourceIdx[src] - 1) : 0;
+      ret.push(baseRet * beta + (Math.random() - 0.5) * noiseVol);
+    }
+    const idx = [100];
+    for (const r of ret) idx.push(Math.max(1, idx[idx.length-1] * (1 + r)));
+    return idx;
+  }
+
+  const baskets = {
+    A_foundry:       { label:"台灣晶圓代工",          index: makeLaggedBasket(aiIdx, 6, .02, .9),  momentum_latest: 8.2  },
+    B_ic_design:     { label:"台灣 AI / IC 設計",     index: makeLaggedBasket(aiIdx, 4, .025, 1.1), momentum_latest: -1.9 },
+    C_packaging:     { label:"台灣 AI 伺服器",         index: makeLaggedBasket(cloudIdx, 8, .018, .8), momentum_latest: 1.1 },
+    D_server:        { label:"台灣雲端伺服器",           index: makeLaggedBasket(cloudIdx, 10, .022, .85), momentum_latest: 6.0 },
+    E_power_thermal: { label:"台灣散熱 & 電源",        index: makeLaggedBasket(aiIdx, 5, .02, .95), momentum_latest: 3.2 },
+    F_memory:        { label:"台灣記憶體",              index: makeLaggedBasket(ceIdx, 3, .03, .7), momentum_latest: -1.4  },
+    G_power_infra:   { label:"美國電力基礎設施",        index: makeLaggedBasket(cloudIdx, -3, .015, .5), momentum_latest: 1.0 },
+  };
+
+  // Pulse (0-100)
+  function makePulse(sourceIdx) {
+    const mom13 = [], pulse = [];
+    for (let i = 0; i < N; i++) {
+      const j = Math.max(0, i - 13);
+      const m = sourceIdx[j] > 0 ? (sourceIdx[i] / sourceIdx[j] - 1) * 100 : 0;
+      mom13.push(m);
+    }
+    // Rolling z-score
+    for (let i = 0; i < N; i++) {
+      const w = mom13.slice(Math.max(0, i-52), i+1);
+      if (w.length < 10) { pulse.push(50); continue; }
+      const mu = w.reduce((s,v)=>s+v,0)/w.length;
+      const sig = Math.sqrt(w.reduce((s,v)=>s+(v-mu)**2,0)/w.length) || 1;
+      const z = (mom13[i] - mu) / sig;
+      pulse.push(Math.min(100, Math.max(0, (Math.tanh(z/2)+1)/2*100)));
+    }
+    return pulse;
+  }
+
+  // Build 21 lead-lag pairs
+  function buildLeadLag(demandIdx, basketIdx, trueLag) {
+    const weeklyLag = [], weeklyCorr = [], weeklyType = [];
+    for (let i = 0; i < N; i++) {
+      // Simulate measured lag ≈ trueLag ± noise
+      const noise = Math.round((Math.random()-0.5)*4);
+      const lag = trueLag + noise;
+      const corr = 0.3 + Math.random()*0.45 + (Math.abs(trueLag)>2 ? 0.1 : 0);
+      weeklyLag.push(lag);
+      weeklyCorr.push(+corr.toFixed(3));
+      weeklyType.push(corr < 0.2 ? "weak" : Math.abs(lag)<=1 ? "sync" : lag>0 ? "us_lead" : "tw_lead");
+    }
+    const summ = { us_lead_pct:0, tw_lead_pct:0, sync_pct:0, weak_pct:0, avg_lag: trueLag, avg_corr:.55 };
+    weeklyType.forEach(t => { if(t==="us_lead") summ.us_lead_pct++; else if(t==="tw_lead") summ.tw_lead_pct++; else if(t==="sync") summ.sync_pct++; else summ.weak_pct++; });
+    ["us_lead_pct","tw_lead_pct","sync_pct","weak_pct"].forEach(k => summ[k]=+(summ[k]/N*100).toFixed(1));
+    return { weekly_lag: weeklyLag, weekly_corr: weeklyCorr, weekly_type: weeklyType, phases:[], summary:summ };
+  }
+
+  const demandKeys = ["consumer_electronics","cloud_hyperscaler","ai_compute"];
+  const basketKeys = Object.keys(baskets);
+  const trueLeadMap = { consumer_electronics: {A_foundry:5,B_ic_design:3,C_packaging:8,D_server:9,E_power_thermal:4,F_memory:2,G_power_infra:-3},
+    cloud_hyperscaler: {A_foundry:7,B_ic_design:5,C_packaging:10,D_server:11,E_power_thermal:6,F_memory:3,G_power_infra:0},
+    ai_compute:        {A_foundry:6,B_ic_design:4,C_packaging:7,D_server:8,E_power_thermal:5,F_memory:2,G_power_infra:-2} };
+  const lead_lag = {};
+  for (const dk of demandKeys) {
+    for (const bk of basketKeys) {
+      const key = `${dk}_vs_${bk}`;
+      const dIdx = dk==="consumer_electronics"?ceIdx:dk==="cloud_hyperscaler"?cloudIdx:aiIdx;
+      lead_lag[key] = { demand_key:dk, basket_key:bk, ...buildLeadLag(dIdx, baskets[bk].index, trueLeadMap[dk][bk]) };
+    }
+  }
+
+  const cePulse = makePulse(ceIdx), cloudPulse = makePulse(cloudIdx), aiPulse = makePulse(aiIdx);
+
+  return {
+    weeks, latest_week: weeks[N-1],
+    demand_groups: {
+      consumer_electronics: { label:"消費電子 (AAPL)", members:["AAPL"], index:ceIdx, pulse:cePulse, pulse_latest: +cePulse[N-1].toFixed(1) },
+      cloud_hyperscaler:    { label:"雲端超大規模 (MSFT/GOOGL/AMZN/META)", members:["MSFT","GOOGL","AMZN","META"], index:cloudIdx, pulse:cloudPulse, pulse_latest: +cloudPulse[N-1].toFixed(1) },
+      ai_compute:           { label:"AI 算力 (NVDA/AMD)", members:["NVDA","AMD"], index:aiIdx, pulse:aiPulse, pulse_latest: +aiPulse[N-1].toFixed(1) },
+    },
+    baskets: Object.fromEntries(Object.entries(baskets).map(([k,v]) => [k, { ...v, momentum_13w: v.index.map((_,i) => i<13?null:+(v.index[i]/v.index[i-13]-1)*100).map(x=>x===null?null:+x.toFixed(2)) }])),
+    lead_lag, window_weeks:26, max_lag_weeks:12
+  };
+}
+
+/* ─── Time range ─── */
+function updateRangeUI() {
+  const weeks = DATA.weeks, total = weeks.length;
+  rangeStart = Math.max(0, Math.min(rangeStart, total - 2));
+  rangeEnd   = Math.max(rangeStart + 1, Math.min(rangeEnd, total - 1));
+  const pL = rangeStart / (total - 1) * 100;
+  const pR = rangeEnd   / (total - 1) * 100;
+  const fill = $("rangeTrackFill");
+  if (fill) { fill.style.left = pL + "%"; fill.style.width = (pR - pL) + "%"; }
+  $("rangeStartLabel").textContent = weeks[rangeStart] || "—";
+  $("rangeEndLabel").textContent   = weeks[rangeEnd]   || "—";
+  $("rangeInfo").textContent = `已載入共 ${total} 週・${weeks[0]} ～ ${weeks[total-1]}・顯示 ${rangeEnd - rangeStart + 1} 週`;
+}
+
+function applyPreset(years) {
+  const N = DATA.weeks.length;
+  rangeEnd = N - 1;
+  rangeStart = years === 0 ? 0 : Math.max(0, N - 1 - Math.round(years * 52.18));
+  const lEl = $("rangeL"), rEl = $("rangeR");
+  lEl.value = String(rangeStart);
+  rEl.value = String(rangeEnd);
+  document.querySelectorAll(".range-preset").forEach(b =>
+    b.classList.toggle("active", +b.dataset.years === years)
+  );
+  updateRangeUI();
+  renderRangeDependent();
+}
+
+function initTimeRange() {
+  const N = DATA.weeks.length;
+  const lEl = $("rangeL"), rEl = $("rangeR");
+  lEl.max = rEl.max = String(N - 1);
+
+  lEl.oninput = () => {
+    if (+lEl.value >= +rEl.value - 1) lEl.value = String(Math.max(0, +rEl.value - 1));
+    rangeStart = +lEl.value;
+    document.querySelectorAll(".range-preset").forEach(b => b.classList.remove("active"));
+    updateRangeUI(); renderRangeDependent();
+  };
+  rEl.oninput = () => {
+    if (+rEl.value <= +lEl.value + 1) rEl.value = String(Math.min(N - 1, +lEl.value + 1));
+    rangeEnd = +rEl.value;
+    document.querySelectorAll(".range-preset").forEach(b => b.classList.remove("active"));
+    updateRangeUI(); renderRangeDependent();
+  };
+
+  document.querySelectorAll(".range-preset").forEach(btn =>
+    btn.onclick = () => applyPreset(+btn.dataset.years)
+  );
+
+  applyPreset(3); // default: last 3 years
+}
+
+function renderRangeDependent() {
+  renderDemandCards();
+  renderMultiStrip();
+  renderBacktestTable();
+  renderBasketMomentum();
+  renderBasketIndexChart();
+  renderDemandPulseChart();
+  renderNarrative();
+}
+
+/* ─── Init selects (called once after data loads) ─── */
+function initSelects() {
+  const demandKeys = Object.keys(DATA.demand_groups);
+  const basketKeys = Object.keys(DATA.baskets);
+
+  function fillDemandOpts(el) {
+    el.innerHTML = "";
+    demandKeys.forEach(dk => {
+      const o = document.createElement("option");
+      o.value = dk;
+      o.textContent = DATA.demand_groups[dk].label.split("(")[0].trim();
+      el.appendChild(o);
+    });
+  }
+  function fillBasketOpts(el, includeAll = false) {
+    el.innerHTML = "";
+    if (includeAll) {
+      const o = document.createElement("option"); o.value = ""; o.textContent = "全部籃子"; el.appendChild(o);
+    }
+    basketKeys.forEach(bk => {
+      const o = document.createElement("option"); o.value = bk;
+      o.textContent = DATA.baskets[bk].label; el.appendChild(o);
+    });
+  }
+
+  // Strip
+  const stripD = $("stripDemandSel"), stripB = $("stripBasketFilter");
+  fillDemandOpts(stripD);
+  fillBasketOpts(stripB, true);
+  if (!activeStripDemand) activeStripDemand = demandKeys[0];
+  stripD.value = activeStripDemand;
+  stripB.value = activeStripBasket;
+  stripD.onchange = () => { activeStripDemand = stripD.value; renderMultiStrip(); };
+  stripB.onchange = () => { activeStripBasket = stripB.value; renderMultiStrip(); };
+
+  // Backtest
+  const btD = $("btDemandSel"), btB = $("btBasketFilter"), btH = $("btHorizon");
+  fillDemandOpts(btD);
+  fillBasketOpts(btB, true);
+  if (!activeBtDemand) activeBtDemand = demandKeys[0];
+  btD.value = activeBtDemand;
+  btB.value = activeBtBasket;
+  btH.value = String(activeBtHorizon);
+  btD.onchange = () => { activeBtDemand = btD.value; renderBacktestTable(); };
+  btB.onchange = () => { activeBtBasket = btB.value; renderBacktestTable(); };
+  btH.onchange = () => { activeBtHorizon = +btH.value; renderBacktestTable(); };
+
+  // Narrative
+  const nD = $("narrativeDemandSel"), nB = $("narrativeBasketSel");
+  fillDemandOpts(nD);
+  fillBasketOpts(nB, false);
+  if (!activeNarrDemand) activeNarrDemand = demandKeys[0];
+  if (!activeNarrBasket) activeNarrBasket = basketKeys[0];
+  nD.value = activeNarrDemand;
+  nB.value = activeNarrBasket;
+  nD.onchange = () => { activeNarrDemand = nD.value; renderNarrative(); };
+  nB.onchange = () => { activeNarrBasket = nB.value; renderNarrative(); };
+}
+
+/* ─── Render functions ─── */
+
+function renderDemandCards() {
+  const container = $("demandPulseCards");
+  container.innerHTML = "";
+  const demandKeys = Object.keys(DATA.demand_groups);
+  demandKeys.forEach(dk => {
+    const g = DATA.demand_groups[dk];
+    const pulse = (g.pulse && g.pulse[rangeEnd] != null) ? g.pulse[rangeEnd] : (g.pulse_latest ?? 50);
+    const color = pulse > 65 ? "#4ade80" : pulse > 50 ? "#38bdf8" : pulse > 35 ? "#f59e0b" : "#f87171";
+    const label = pulse > 65 ? "強勢" : pulse > 50 ? "中性偏強" : pulse > 35 ? "中性偏弱" : "偏弱";
+    const div = document.createElement("div");
+    div.className = "pulse-card";
+    div.innerHTML = `<div class="label">${g.label}</div>
+      <div><span class="score" style="color:${color}">${pulse.toFixed(1)}</span><span class="score-label">${label}</span></div>
+      <div class="pulse-bar-track"><div class="pulse-bar-fill" style="width:${pulse}%;background:${color}"></div></div>`;
+    container.appendChild(div);
+  });
+  // Theme badge (use rangeEnd position)
+  const _p = k => { const g = DATA.demand_groups[k]; return (g?.pulse && g.pulse[rangeEnd] != null) ? g.pulse[rangeEnd] : (g?.pulse_latest ?? 50); };
+  const ai = _p("ai_compute"), cloud = _p("cloud_hyperscaler"), ce = _p("consumer_electronics");
+  let theme, color;
+  if (ai > 65) { theme = "AI 算力擴張"; color = "#4ade80"; }
+  else if (cloud > 65) { theme = "雲端資本支出加速"; color = "#f59e0b"; }
+  else if (ce > 65) { theme = "消費電子復甦"; color = "#38bdf8"; }
+  else if (ai < 35 && cloud < 35) { theme = "需求收縮"; color = "#f87171"; }
+  else { theme = "需求中性觀察"; color = "#8b9cb3"; }
+  $("themeBadge").textContent = theme;
+  $("themeBadge").style.background = color + "22";
+  $("themeBadge").style.color = color;
+}
+
+function renderMatrices() {
+  const demandKeys = Object.keys(DATA.demand_groups);
+  const basketKeys = Object.keys(DATA.baskets);
+  const demandLabels = demandKeys.map(k => DATA.demand_groups[k].label.split("(")[0].trim());
+  const basketLabels = basketKeys.map(k => DATA.baskets[k].label);
+
+  // Get summary stats for each pair
+  function getPairStat(dk, bk, field) {
+    const key = `${dk}_vs_${bk}`;
+    return DATA.lead_lag[key]?.summary?.[field] ?? null;
+  }
+
+  function renderMatrix(wrapId, field, fmtFn, colorFn) {
+    const wrap = $(wrapId);
+    let html = `<table class="matrix-table"><thead><tr><th></th>`;
+    demandLabels.forEach(l => html += `<th>${l}</th>`);
+    html += `</tr></thead><tbody>`;
+    basketKeys.forEach((bk, bi) => {
+      html += `<tr><td class="row-label">${basketLabels[bi]}</td>`;
+      demandKeys.forEach(dk => {
+        const v = getPairStat(dk, bk, field);
+        if (v === null) { html += `<td>—</td>`; return; }
+        const { bg, text } = colorFn(v);
+        html += `<td><span class="cell-chip" style="background:${bg};color:${text}">${fmtFn(v)}</span></td>`;
+      });
+      html += `</tr>`;
+    });
+    html += `</tbody></table>`;
+    wrap.innerHTML = html;
+  }
+
+  // Lag matrix
+  renderMatrix("lagMatrixWrap", "avg_lag",
+    v => v > 0 ? `+${v.toFixed(0)}w` : v < 0 ? `${v.toFixed(0)}w` : "0w",
+    v => {
+      if (v > 6)   return { bg:"rgba(74,222,128,.18)", text:"#4ade80" };
+      if (v > 2)   return { bg:"rgba(74,222,128,.1)",  text:"#86efac" };
+      if (v >= -2) return { bg:"rgba(139,92,246,.12)", text:"#a78bfa" };
+      if (v >= -6) return { bg:"rgba(245,158,11,.12)", text:"#fbbf24" };
+      return         { bg:"rgba(245,158,11,.2)",  text:"#f59e0b" };
+    }
+  );
+
+  // Corr matrix
+  renderMatrix("corrMatrixWrap", "avg_corr",
+    v => v.toFixed(2),
+    v => {
+      if (v > 0.6)  return { bg:"rgba(74,222,128,.2)",  text:"#4ade80" };
+      if (v > 0.4)  return { bg:"rgba(74,222,128,.1)",  text:"#86efac" };
+      if (v > 0.25) return { bg:"rgba(56,189,248,.1)",  text:"#7dd3fc" };
+      return          { bg:"rgba(71,85,105,.2)",   text:"#94a3b8" };
+    }
+  );
+}
+
+function renderMultiStrip() {
+  const allBasketKeys = Object.keys(DATA.baskets);
+  const basketKeys = activeStripBasket ? [activeStripBasket] : allBasketKeys;
+  const wrap = $("multiStrip");
+  wrap.innerHTML = "";
+
+  const weeks = DATA.weeks.slice(rangeStart, rangeEnd + 1);
+  const N = weeks.length;
+
+  basketKeys.forEach(bk => {
+    const pairKey = `${activeStripDemand}_vs_${bk}`;
+    const pair = DATA.lead_lag[pairKey];
+    if (!pair) return;
+
+    const types = pair.weekly_type.slice(rangeStart, rangeEnd + 1);
+    const lagsSliced = pair.weekly_lag.slice(rangeStart, rangeEnd + 1);
+
+    const rowDiv = document.createElement("div");
+    rowDiv.style.marginBottom = ".6rem";
+
+    const label = document.createElement("div");
+    label.style.cssText = "font-size:.75rem;color:var(--muted);margin-bottom:.25rem";
+    label.textContent = DATA.baskets[bk].label;
+    rowDiv.appendChild(label);
+
+    const stripDiv = document.createElement("div");
+    stripDiv.className = "strip-wrap";
+    stripDiv.style.height = "24px";
+
+    const canvas = document.createElement("canvas");
+    canvas.style.cssText = "width:100%;height:100%;display:block";
+    stripDiv.appendChild(canvas);
+    rowDiv.appendChild(stripDiv);
+
+    // Draw strip
+    setTimeout(() => {
+      const rect = stripDiv.getBoundingClientRect();
+      canvas.width = rect.width * 2;
+      canvas.height = 48;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(2, 2);
+      const bw = rect.width / N;
+      types.forEach((t, i) => {
+        ctx.fillStyle = TYPE_COLOR[t] || TYPE_COLOR.weak;
+        ctx.fillRect(i * bw, 0, bw + 0.5, 24);
+      });
+
+      // Hover
+      stripDiv.onmousemove = e => {
+        const br = stripDiv.getBoundingClientRect();
+        const idx = Math.min(N-1, Math.floor((e.clientX - br.left) / br.width * N));
+        const t = types[idx];
+        const lag = lagsSliced[idx];
+        const typeLabel = { us_lead:"美股領先", tw_lead:"台股領先", sync:"同步", weak:"弱關聯" }[t];
+        tooltip.innerHTML = `<b>${weeks[idx]}</b><br>${DATA.baskets[bk].label}<br>狀態：${typeLabel}<br>領先週數：${lag > 0 ? "美股+" : lag < 0 ? "台股+" : ""}${Math.abs(lag)}w`;
+        tooltip.className = "show";
+        tooltip.style.left = (e.clientX + 12) + "px";
+        tooltip.style.top = (e.clientY - 60) + "px";
+      };
+      stripDiv.onmouseleave = () => { tooltip.className = ""; };
+    }, 0);
+
+    wrap.appendChild(rowDiv);
+  });
+
+  // Date labels
+  const dateRow = document.createElement("div");
+  dateRow.className = "strip-label-row";
+  dateRow.innerHTML = `<span>${weeks[0]}</span><span>${weeks[N-1]}</span>`;
+  wrap.appendChild(dateRow);
+}
+
+function renderBacktestTable() {
+  const allBasketKeys = Object.keys(DATA.baskets);
+  const basketKeys = activeBtBasket ? [activeBtBasket] : allBasketKeys;
+  const table = $("btTable");
+
+  const rows = [];
+  const weeks = DATA.weeks.slice(rangeStart, rangeEnd + 1);
+  const N = weeks.length;
+  const HORIZON = activeBtHorizon;
+
+  basketKeys.forEach(bk => {
+    const pairKey = `${activeBtDemand}_vs_${bk}`;
+    const pair = DATA.lead_lag[pairKey];
+    const basketData = DATA.baskets[bk];
+    if (!pair || !basketData?.index) return;
+
+    const idx = basketData.index.slice(rangeStart, rangeEnd + 1);
+    const types = pair.weekly_type.slice(rangeStart, rangeEnd + 1);
+
+    for (const theme of ["us_lead", "tw_lead", "sync"]) {
+      const fwdReturns = [];
+      for (let i = 0; i < N - HORIZON; i++) {
+        if (types[i] !== theme) continue;
+        if (!idx[i] || !idx[i + HORIZON] || idx[i] === 0) continue;
+        fwdReturns.push((idx[i + HORIZON] / idx[i] - 1) * 100);
+      }
+      if (fwdReturns.length < 5) continue;
+      const n = fwdReturns.length;
+      const mean = fwdReturns.reduce((s,v)=>s+v,0)/n;
+      const wins = fwdReturns.filter(v=>v>0).length;
+      const annual = ((1 + mean/100) ** (52/HORIZON) - 1) * 100;
+      const variance = fwdReturns.reduce((s,v)=>s+(v-mean)**2,0)/n;
+      const sharpe = variance > 0 ? (mean / Math.sqrt(variance)) * Math.sqrt(52/HORIZON) : 0;
+      rows.push({ basket: basketData.label, theme, n, mean: +mean.toFixed(1), winRate: +(wins/n*100).toFixed(0), annual: +annual.toFixed(1), sharpe: +sharpe.toFixed(2) });
+    }
+  });
+
+  const themeLabel = { us_lead:"美股領先", tw_lead:"台股領先", sync:"同步" };
+  let html = `<thead><tr><th>主題</th><th>籃子</th><th>樣本</th><th>勝率</th><th>平均報酬 (${HORIZON}w)</th><th>年化報酬</th><th>Sharpe</th></tr></thead><tbody>`;
+  rows.sort((a,b) => b.annual - a.annual).forEach(r => {
+    const pos = r.mean >= 0;
+    html += `<tr>
+      <td><span class="tag ${r.theme==="us_lead"?"us":r.theme==="tw_lead"?"tw":"sy"}">${themeLabel[r.theme]}</span></td>
+      <td style="font-size:.78rem">${r.basket}</td>
+      <td>${r.n}</td>
+      <td class="${r.winRate>=55?"pos":r.winRate<45?"neg":""}">${r.winRate}%</td>
+      <td class="${pos?"pos":"neg"}">${pos?"+":""}${r.mean}%</td>
+      <td class="${r.annual>=0?"pos":"neg"}">${r.annual>=0?"+":""}${r.annual}%</td>
+      <td class="${r.sharpe>1?"pos":r.sharpe<0?"neg":""}">${r.sharpe}</td>
+    </tr>`;
+  });
+  html += "</tbody>";
+  table.innerHTML = html;
+}
+
+function renderBasketMomentum() {
+  const wrap = $("basketMomBars");
+  wrap.innerHTML = "";
+  const basketKeys = Object.keys(DATA.baskets);
+  const maxAbs = basketKeys.reduce((m,k) => {
+    const v = DATA.baskets[k].momentum_latest;
+    return v != null ? Math.max(m, Math.abs(v)) : m;
+  }, 0.1);
+
+  basketKeys.forEach(bk => {
+    const rawIdx = DATA.baskets[bk].index;
+    let val = null;
+    if (rawIdx && rawIdx.length > rangeEnd) {
+      const cur = rawIdx[rangeEnd];
+      const prev = rawIdx[Math.max(0, rangeEnd - 13)];
+      if (prev > 0) val = +(((cur / prev) - 1) * 100).toFixed(1);
+    }
+    val = val ?? DATA.baskets[bk].momentum_latest;
+    if (val == null) return;
+    const pct = Math.abs(val) / maxAbs * 50; // max bar = 50% of track
+    const color = val >= 0 ? "#4ade80" : "#f87171";
+    const row = document.createElement("div");
+    row.className = "mom-bar-row";
+    row.innerHTML = `
+      <div class="mom-bar-name">${DATA.baskets[bk].label}</div>
+      <div class="mom-bar-track">
+        <div class="mom-bar-fill" style="width:${pct}%;background:${color};left:${val>=0?"50%":"calc(50% - "+pct+"%)"}"></div>
+        <div style="position:absolute;top:0;left:50%;width:1px;height:100%;background:rgba(255,255,255,.15)"></div>
+      </div>
+      <div class="mom-bar-val" style="color:${color}">${val>=0?"+":""}${val.toFixed(1)}%</div>`;
+    wrap.appendChild(row);
+  });
+}
+
+function renderBasketIndexChart() {
+  const ctx = $("basketIndexChart").getContext("2d");
+  if (basketIndexChart) basketIndexChart.destroy();
+  const weeks = DATA.weeks.slice(rangeStart, rangeEnd + 1);
+  const basketKeys = Object.keys(DATA.baskets);
+  const datasets = basketKeys.map((bk, i) => ({
+    label: DATA.baskets[bk].label,
+    data: (DATA.baskets[bk].index || []).slice(rangeStart, rangeEnd + 1),
+    borderColor: BASKET_COLORS[i % BASKET_COLORS.length],
+    borderWidth: 1.5,
+    pointRadius: 0,
+    tension: 0.2,
+    spanGaps: true,
+  }));
+  basketIndexChart = new Chart(ctx, {
+    type:"line", data:{ labels:weeks, datasets },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ color:"#e7ecf3", font:{size:10}, boxWidth:12 } } },
+      scales:{
+        x:{ ticks:{ color:"#8b9cb3", maxTicksLimit:14, font:{size:10} }, grid:{color:"rgba(255,255,255,.04)"} },
+        y:{ ticks:{ color:"#8b9cb3" }, grid:{color:"rgba(255,255,255,.06)"} }
+      }
+    }
+  });
+}
+
+function renderDemandPulseChart() {
+  const ctx = $("demandPulseChart").getContext("2d");
+  if (demandPulseChart) demandPulseChart.destroy();
+  const weeks = DATA.weeks.slice(rangeStart, rangeEnd + 1);
+  const demandKeys = Object.keys(DATA.demand_groups);
+  const datasets = demandKeys.map(dk => ({
+    label: DATA.demand_groups[dk].label,
+    data: (DATA.demand_groups[dk].pulse || []).slice(rangeStart, rangeEnd + 1),
+    borderColor: DEMAND_COLORS[dk] || "#38bdf8",
+    borderWidth: 1.5,
+    pointRadius: 0,
+    tension: 0.25,
+    spanGaps: true,
+  }));
+  datasets.push({
+    label:"中性線 (50)",
+    data: weeks.map(() => 50),
+    borderColor:"rgba(255,255,255,.15)",
+    borderDash:[5,5],
+    pointRadius:0,
+    borderWidth:1,
+  });
+  demandPulseChart = new Chart(ctx, {
+    type:"line", data:{ labels:weeks, datasets },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ color:"#e7ecf3", font:{size:10}, boxWidth:12 } } },
+      scales:{
+        x:{ ticks:{ color:"#8b9cb3", maxTicksLimit:14, font:{size:10} }, grid:{color:"rgba(255,255,255,.04)"} },
+        y:{ min:0, max:100, ticks:{ color:"#8b9cb3" }, grid:{color:"rgba(255,255,255,.06)"} }
+      }
+    }
+  });
+}
+
+/* r → 同向機率（雙變量常態分布：P = 0.5 + arcsin(r)/π） */
+function corrToHitRate(r) {
+  const clamped = Math.max(-1, Math.min(1, +r));
+  return Math.round((0.5 + Math.asin(clamped) / Math.PI) * 100);
+}
+
+function renderNarrative() {
+  const pairKey = `${activeNarrDemand}_vs_${activeNarrBasket}`;
+  const pair = DATA.lead_lag[pairKey];
+  const list = $("narrativeList");
+  list.innerHTML = "";
+
+  if (!pair?.phases?.length) {
+    // Auto-generate phases from weekly data (filtered by time range)
+    const types = (pair?.weekly_type || []).slice(rangeStart, rangeEnd + 1);
+    const lags  = (pair?.weekly_lag  || []).slice(rangeStart, rangeEnd + 1);
+    const corrs = (pair?.weekly_corr || []).slice(rangeStart, rangeEnd + 1);
+    const weeks = DATA.weeks.slice(rangeStart, rangeEnd + 1);
+    if (!types.length) { list.innerHTML = `<p style="color:var(--muted);font-size:.85rem">暫無資料</p>`; return; }
+
+    // Segment
+    const phases = [];
+    let cur = { type:types[0], start:0, end:0, lags:[lags[0]], corrs:[corrs[0]||0] };
+    for (let i = 1; i < types.length; i++) {
+      if (types[i] === cur.type) { cur.end=i; cur.lags.push(lags[i]); cur.corrs.push(corrs[i]||0); }
+      else { phases.push(cur); cur={type:types[i],start:i,end:i,lags:[lags[i]],corrs:[corrs[i]||0]}; }
+    }
+    phases.push(cur);
+
+    // Merge short ones
+    const merged = [];
+    for (const p of phases) {
+      if (p.end-p.start+1 < 4 && merged.length) {
+        const prev = merged[merged.length-1];
+        prev.end = p.end; prev.lags.push(...p.lags); prev.corrs.push(...p.corrs);
+      } else merged.push(p);
+    }
+
+    const usName = DATA.demand_groups[activeNarrDemand]?.label || activeNarrDemand;
+    const twName = DATA.baskets[activeNarrBasket]?.label || activeNarrBasket;
+
+    merged.forEach(p => {
+      const avgLag = (p.lags.reduce((s,v)=>s+v,0)/p.lags.length).toFixed(1);
+      const avgCorr = (p.corrs.reduce((s,v)=>s+v,0)/p.corrs.length).toFixed(3);
+      const dur = p.end - p.start + 1;
+      const sd = weeks[p.start], ed = weeks[p.end];
+      const absLag = Math.abs(+avgLag).toFixed(0);
+      const hitRate = corrToHitRate(+avgCorr);
+      const hitColor = hitRate >= 75 ? "#4ade80" : hitRate >= 65 ? "#f59e0b" : "#8b9cb3";
+      const corrDesc = +avgCorr > 0.6 ? "非常強" : +avgCorr > 0.4 ? "強" : +avgCorr > 0.25 ? "中等" : "偏弱";
+
+      let text, cssClass, tagCls, tagLabel;
+      if (p.type === "us_lead") {
+        cssClass="us-lead"; tagCls="us"; tagLabel="美股領先";
+        text = `這段時間（${dur} 週），觀察 ${usName} 的走勢，大約 <b>${absLag} 週後</b>可預期 ${twName} 跟上類似方向。相關性${corrDesc}（r = ${avgCorr}）。`;
+        if (+avgCorr > 0.4 && +absLag >= 4) text += `<br>→ 可能原因：美國市場情緒、資金流向或基本面變化需要時間傳導到台灣供應鏈。`;
+      } else if (p.type === "tw_lead") {
+        cssClass="tw-lead"; tagCls="tw"; tagLabel="台股領先";
+        text = `有趣的反轉——這段時間（${dur} 週）${twName} 反而領先 ${usName} 約 <b>${absLag} 週</b>。相關性${corrDesc}（r = ${avgCorr}）。`;
+        if (+avgCorr > 0.4) text += `<br>→ 台灣供應鏈端可能先感受到訂單增減，比美國終端需求數據更早見頂或見底。`;
+      } else if (p.type === "sync") {
+        cssClass="sync"; tagCls="sy"; tagLabel="同步";
+        text = `兩市場幾乎同步變動（${dur} 週），領先落後差距在 1 週以內，相關性${corrDesc}（r = ${avgCorr}）。<br>→ 常見於全球性事件同時衝擊兩個市場的時候。`;
+      } else {
+        cssClass=""; tagCls="wk"; tagLabel="弱關聯";
+        text = `這段時間（${dur} 週）兩者各走各的路，統計關聯性偏弱（r = ${avgCorr}）。<br>→ 不宜用其中一方預測另一方。`;
+      }
+
+      const block = document.createElement("div");
+      block.className = "narrative-block" + (cssClass ? " "+cssClass : "");
+      block.innerHTML = `<div class="period">${sd} → ${ed}（${dur} 週）</div>
+        <span class="tag ${tagCls}">${tagLabel}</span>
+        <span class="tag wk">領先 ${absLag} 週 · r = ${avgCorr}</span>
+        <span class="tag" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:${hitColor}">同向機率 ~${hitRate}%</span>
+        <div class="narrative-body">${text}</div>`;
+      list.appendChild(block);
+    });
+  }
+}
+
+/* ─── Amplifier Chain ─── */
+function renderAmplifierChain() {
+  const wrap = $("amplifierChain");
+  if (!wrap) return;
+
+  const nodes = DATA.amplifier_chain || _buildDemoAmplifierChain();
+  if (!nodes.length) return;
+
+  // Build horizontal flow: node → arrow → node → ...
+  const container = document.createElement("div");
+  container.style.cssText = "display:flex;align-items:stretch;gap:0;min-width:900px";
+
+  nodes.forEach((node, i) => {
+    // Compute momentum color from index
+    let momColor = "#8b9cb3"; // neutral default
+    if (node.index && node.index.length >= 14) {
+      const idxArr = node.index.filter(v => v != null);
+      if (idxArr.length >= 14) {
+        const latest = idxArr[idxArr.length - 1];
+        const prev = idxArr[idxArr.length - 14];
+        if (prev > 0) {
+          const mom = (latest / prev - 1) * 100;
+          momColor = mom > 5 ? "#4ade80" : mom > 0 ? "#86efac" : mom > -5 ? "#f59e0b" : "#f87171";
+        }
+      }
+    }
+
+    const lagText = node.lag_vs_nvda != null
+      ? (node.lag_vs_nvda > 0 ? `落後 NVDA ${node.lag_vs_nvda}w` : node.lag_vs_nvda < 0 ? `領先 NVDA ${Math.abs(node.lag_vs_nvda)}w` : "與 NVDA 同步")
+      : "";
+
+    const nodeDiv = document.createElement("div");
+    nodeDiv.style.cssText = "flex:1;min-width:120px;max-width:180px";
+    nodeDiv.innerHTML = `
+      <div style="background:var(--card2);border-radius:8px;padding:.7rem;border:1px solid ${momColor}33;height:100%">
+        <div style="width:8px;height:8px;border-radius:50%;background:${momColor};margin-bottom:.4rem"></div>
+        <div style="font-size:.8rem;font-weight:600;line-height:1.3;margin-bottom:.25rem">${node.label}</div>
+        <div style="font-size:.7rem;color:var(--muted)">${(node.tickers||[]).join(" · ")}</div>
+        ${lagText ? `<div style="font-size:.7rem;margin-top:.35rem;color:${momColor};font-variant-numeric:tabular-nums">${lagText}</div>` : ""}
+        ${node.corr_vs_nvda != null ? `<div style="font-size:.68rem;color:var(--muted)">r = ${node.corr_vs_nvda}</div>` : ""}
+      </div>`;
+    container.appendChild(nodeDiv);
+
+    // Arrow
+    if (i < nodes.length - 1) {
+      const arrow = document.createElement("div");
+      arrow.style.cssText = "display:flex;align-items:center;padding:0 .3rem;color:var(--accent);font-size:1rem;flex-shrink:0";
+      arrow.textContent = "→";
+      container.appendChild(arrow);
+    }
+  });
+
+  wrap.innerHTML = "";
+  wrap.appendChild(container);
+}
+
+function _buildDemoAmplifierChain() {
+  return [
+    { id:"nvda", label:"AI 算力需求\n(NVDA)", tickers:["NVDA"], lag_vs_nvda:0, corr_vs_nvda:1.00, index:null },
+    { id:"foundry", label:"先進製程 (TSMC)", tickers:["2330.TW"], lag_vs_nvda:6, corr_vs_nvda:.78, index:null },
+    { id:"cowos", label:"先進封裝 CoWoS", tickers:["3711.TW","2325.TW"], lag_vs_nvda:7, corr_vs_nvda:.71, index:null },
+    { id:"hbm", label:"HBM 記憶體", tickers:["2408.TW"], lag_vs_nvda:8, corr_vs_nvda:.65, index:null },
+    { id:"server", label:"伺服器組裝", tickers:["2382.TW","6669.TW"], lag_vs_nvda:9, corr_vs_nvda:.69, index:null },
+    { id:"thermal", label:"散熱 & 電源", tickers:["3017.TW","2308.TW"], lag_vs_nvda:5, corr_vs_nvda:.62, index:null },
+    { id:"datacenter", label:"資料中心 & 電力", tickers:["XLU","NEE"], lag_vs_nvda:-3, corr_vs_nvda:.45, index:null },
+  ];
+}
+
+/* ─── Main render ─── */
+function renderAll() {
+  $("latestWeek").textContent = DATA.latest_week || "—";
+
+  initSelects();          // populate + wire all <select> elements
+  renderMatrices();       // full-range static (no time filter needed)
+  renderAmplifierChain(); // full-range static
+  initTimeRange();        // sets rangeStart/rangeEnd, then calls renderRangeDependent()
+}
+
+/* ─── Data loading ─── */
+function onDataLoaded(data, source) {
+  DATA = data;
+  const label = $("dataSourceLabel");
+  const status = $("loadStatus");
+  if (source === "real") {
+    if (label) label.textContent = `▶ 目前顯示：真實資料（${data.latest_week || ""}）`;
+    if (status) { status.textContent = `已載入 ${data.weeks?.length || 0} 週，${Object.keys(data.lead_lag||{}).length} 組配對。`; status.style.color = "var(--green)"; }
+  } else {
+    if (label) label.textContent = "▶ 目前顯示：示範資料（模擬 2016–2025）";
+    if (status) { status.textContent = ""; }
+  }
+  renderAll();
+}
+
+$("fileIn").addEventListener("change", function(e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try { onDataLoaded(JSON.parse(r.result), "real"); }
+    catch (err) {
+      const s = $("loadStatus");
+      if (s) { s.textContent = "解析失敗：" + err.message; s.style.color = "var(--red)"; }
+    }
+  };
+  r.readAsText(f);
+});
+
+// Try real data first, fall back to demo immediately
+fetch("output/supply_chain_data.json")
+  .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+  .then(data => onDataLoaded(data, "real"))
+  .catch(() => onDataLoaded(generateDemoData(), "demo"));
+
+// Resize
+let resizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { if (DATA) { renderMultiStrip(); } }, 200);
+});
+
+})();
+</script>
+</body>
+</html>

@@ -256,5 +256,52 @@ def all(start: str, end: str | None) -> None:
     click.echo("Pipeline complete.")
 
 
+@cli.group(name="supply-chain")
+def supply_chain_group() -> None:
+    """Supply chain mapping system (US tech demand → Taiwan supply chain)."""
+
+
+@supply_chain_group.command("fetch")
+@click.option("--start", default="2016-01-01", show_default=True)
+@click.option("--end", default=None)
+@click.option("--throttle", default=0.5, show_default=True, help="Seconds between requests")
+def sc_fetch(start: str, end: str | None, throttle: float) -> None:
+    """Fetch all supply chain + demand tickers into SQLite."""
+    from supply_chain.fetch import fetch_supply_chain_raw
+    results = fetch_supply_chain_raw(start=start, end=end, throttle=throttle)
+    ok = sum(v for v in results.values())
+    fail = len(results) - ok
+    click.echo(f"Fetched {ok} tickers OK, {fail} failed.")
+    if fail:
+        failed = [t for t, v in results.items() if not v]
+        click.echo(f"  Failed: {', '.join(failed)}")
+
+
+@supply_chain_group.command("export")
+@click.option("--start", default="2016-01-01", show_default=True)
+@click.option("--end", default=None)
+@click.option("--window", default=26, show_default=True, help="Rolling window in weeks")
+@click.option("--max-lag", default=12, show_default=True, help="Max lead/lag weeks to test")
+def sc_export(start: str, end: str | None, window: int, max_lag: int) -> None:
+    """Build and export supply_chain_data.json for the HTML visualization."""
+    from supply_chain.export_json import build_supply_chain_json
+    path = build_supply_chain_json(start=start, end=end, window=window, max_lag=max_lag)
+    click.echo(f"Exported: {path}")
+
+
+@supply_chain_group.command("all")
+@click.option("--start", default="2016-01-01", show_default=True)
+@click.option("--end", default=None)
+def sc_all(start: str, end: str | None) -> None:
+    """fetch + export supply chain data in one step."""
+    from supply_chain.fetch import fetch_supply_chain_raw
+    from supply_chain.export_json import build_supply_chain_json
+    click.echo("Step 1/2: Fetching supply chain tickers...")
+    fetch_supply_chain_raw(start=start, end=end)
+    click.echo("Step 2/2: Building analysis + exporting JSON...")
+    path = build_supply_chain_json(start=start, end=end)
+    click.echo(f"Done. JSON at: {path}")
+
+
 if __name__ == "__main__":
     cli()

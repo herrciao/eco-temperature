@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>美股 ↔ 台股 Lead-Lag 時間線</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a2332;
+      --card-hover: #1e2a3d;
+      --text: #e7ecf3;
+      --muted: #8b9cb3;
+      --accent: #38bdf8;
+      --us-lead: #4ade80;
+      --tw-lead: #f59e0b;
+      --sync: #8b5cf6;
+      --weak: #475569;
+      --bad: #f87171;
+      --border: rgba(255,255,255,0.06);
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      font-family: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 1.5rem;
+      line-height: 1.6;
+    }
+    h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.1rem; font-weight: 600; margin: 0 0 0.75rem; color: var(--accent); }
+    h3 { font-size: 0.95rem; font-weight: 600; margin: 0.75rem 0 0.5rem; }
+    .sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 1.5rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+
+    /* Data loading */
+    .load-section { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .load-section input[type="file"] {
+      color: var(--text); background: #334155; border: 1px solid #475569;
+      border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.88rem;
+    }
+    .load-section button {
+      background: var(--accent); color: #0f1419; border: none;
+      padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600;
+      cursor: pointer; font-size: 0.88rem;
+    }
+    .load-section button:hover { opacity: 0.9; }
+    .load-section button.secondary { background: #334155; color: var(--text); }
+    #loadStatus { color: var(--muted); font-size: 0.85rem; }
+    #loadStatus.ok { color: var(--us-lead); }
+    #loadStatus.err { color: var(--bad); }
+
+    /* Config row */
+    .config-row {
+      display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+      margin-bottom: 1rem;
+    }
+    .config-row label { font-size: 0.85rem; color: var(--muted); }
+    .config-row select, .config-row input {
+      background: #334155; color: var(--text); border: 1px solid #475569;
+      border-radius: 6px; padding: 0.35rem 0.5rem; font-size: 0.85rem;
+    }
+
+    /* Legend */
+    .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem; font-size: 0.82rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+    .legend-dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+
+    /* Timeline strip */
+    #timelineStrip {
+      height: 40px; border-radius: 8px; overflow: hidden;
+      margin-bottom: 0.75rem; cursor: crosshair; position: relative;
+    }
+    #timelineStrip canvas { width: 100%; height: 100%; display: block; }
+
+    /* Charts */
+    .chart-wrap { position: relative; height: 280px; margin-bottom: 0.5rem; }
+    .chart-wrap canvas { width: 100%; height: 100%; }
+
+    /* Narrative blocks */
+    .narrative-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .narrative-block {
+      background: rgba(0,0,0,0.25); border-radius: 10px;
+      padding: 0.85rem 1rem; border-left: 4px solid var(--weak);
+      transition: background 0.15s;
+    }
+    .narrative-block:hover { background: rgba(0,0,0,0.35); }
+    .narrative-block.us-lead { border-left-color: var(--us-lead); }
+    .narrative-block.tw-lead { border-left-color: var(--tw-lead); }
+    .narrative-block.sync { border-left-color: var(--sync); }
+    .narrative-block .period {
+      font-size: 0.78rem; color: var(--muted);
+      font-variant-numeric: tabular-nums; margin-bottom: 0.25rem;
+    }
+    .narrative-block .tag {
+      display: inline-block; font-size: 0.72rem; font-weight: 600;
+      padding: 0.15rem 0.5rem; border-radius: 4px; margin-right: 0.5rem;
+    }
+    .tag.us { background: rgba(74,222,128,0.15); color: var(--us-lead); }
+    .tag.tw { background: rgba(245,158,11,0.15); color: var(--tw-lead); }
+    .tag.sy { background: rgba(139,92,246,0.15); color: var(--sync); }
+    .narrative-block .body { font-size: 0.88rem; line-height: 1.65; }
+    .narrative-block .stats {
+      font-size: 0.78rem; color: var(--muted); margin-top: 0.35rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Summary box */
+    .summary-box {
+      background: linear-gradient(135deg, rgba(56,189,248,0.08), rgba(139,92,246,0.08));
+      border: 1px solid rgba(56,189,248,0.2);
+      border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem;
+    }
+    .summary-box p { font-size: 0.92rem; line-height: 1.7; }
+
+    /* Tooltip */
+    #tooltip {
+      position: fixed; background: #1e293b; border: 1px solid #475569;
+      border-radius: 8px; padding: 0.6rem 0.8rem; font-size: 0.8rem;
+      pointer-events: none; opacity: 0; transition: opacity 0.15s;
+      z-index: 100; max-width: 280px; line-height: 1.5;
+    }
+    #tooltip.show { opacity: 1; }
+
+    @media (max-width: 640px) {
+      body { padding: 0.75rem; }
+      .chart-wrap { height: 220px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>美股 ↔ 台股 Lead-Lag 時間線</h1>
+  <p class="sub">
+    在每個時間區段，直覺看出美股與台股之間誰先誰後、領先多久，以及人話解讀。
+  </p>
+
+  <!-- Config (always visible) -->
+  <div class="card" id="configCard">
+    <h2>⚙️ 分析設定</h2>
+    <div class="config-row">
+      <label>美股標的</label>
+      <select id="selUS"></select>
+      <label>台股標的</label>
+      <select id="selTW"></select>
+      <label>滾動窗口</label>
+      <select id="selWindow">
+        <option value="13">13 週（季）</option>
+        <option value="26" selected>26 週（半年）</option>
+        <option value="52">52 週（年）</option>
+      </select>
+      <label>最大領先週數</label>
+      <select id="selMaxLag">
+        <option value="8">8 週</option>
+        <option value="12" selected>12 週</option>
+        <option value="16">16 週</option>
+        <option value="20">20 週</option>
+      </select>
+      <button type="button" id="btnRun" style="background:var(--accent);color:#0f1419;border:none;padding:0.5rem 1rem;border-radius:8px;font-weight:600;cursor:pointer;">重新分析</button>
+      <button type="button" class="secondary" id="btnExport" style="background:#334155;color:var(--text);border:none;padding:0.5rem 1rem;border-radius:8px;font-weight:600;cursor:pointer;">匯出結果</button>
+    </div>
+    <details style="margin-top:0.75rem;">
+      <summary style="cursor:pointer;font-size:0.82rem;color:var(--muted);user-select:none;">📂 載入自己的資料（進階）</summary>
+      <div style="margin-top:0.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <input type="file" id="fileIn" accept=".json,.csv" style="color:var(--text);background:#334155;border:1px solid #475569;border-radius:6px;padding:0.4rem 0.6rem;font-size:0.85rem;" />
+        <span style="font-size:0.8rem;color:var(--muted);">支援 CSV 或 JSON，需包含日期欄位及美股/台股價格欄位</span>
+      </div>
+    </details>
+    <p id="loadStatus" style="margin-top:0.5rem;font-size:0.85rem;color:var(--muted);"></p>
+  </div>
+
+  <!-- Results (hidden until analysis) -->
+  <div id="resultsArea" style="display:none">
+
+    <!-- Overall summary -->
+    <div class="summary-box" id="summaryBox">
+      <h2>📋 整體摘要</h2>
+      <p id="summaryText"></p>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--us-lead)"></div>美股領先台股</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--tw-lead)"></div>台股領先美股</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--sync)"></div>同步（±1 週內）</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--weak)"></div>關聯性弱</div>
+    </div>
+
+    <!-- Timeline strip -->
+    <div class="card">
+      <h2>🗓️ 時間色帶</h2>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;">
+        每一格代表一週。<span style="color:var(--us-lead)">■ 綠色</span> = 美股領先，<span style="color:var(--tw-lead)">■ 橘色</span> = 台股領先，<span style="color:var(--sync)">■ 紫色</span> = 同步。滑鼠移上去看詳細。
+      </p>
+      <div id="timelineStrip"><canvas id="stripCanvas"></canvas></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);">
+        <span id="stripStart"></span><span id="stripEnd"></span>
+      </div>
+    </div>
+
+    <!-- Rolling lead chart -->
+    <div class="card">
+      <h2>📈 滾動最佳領先週數</h2>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem;">
+        Y 軸正值 = 美股領先台股 N 週；負值 = 台股領先美股 N 週。零線 = 同步。
+      </p>
+      <div class="chart-wrap"><canvas id="leadChart"></canvas></div>
+    </div>
+
+    <!-- Rolling correlation chart -->
+    <div class="card">
+      <h2>📊 滾動相關性強度</h2>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem;">
+        在最佳領先週數下的 Pearson 相關係數。> 0.5 = 強關聯，< 0.3 = 弱關聯。
+      </p>
+      <div class="chart-wrap"><canvas id="corrChart"></canvas></div>
+    </div>
+
+    <!-- Narrative timeline -->
+    <div class="card">
+      <h2>💬 人話時間線</h2>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;">
+        系統自動把連續的領先/落後狀態歸為同一階段，並生成白話解讀。
+      </p>
+      <div class="narrative-list" id="narrativeList"></div>
+    </div>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function() {
+  "use strict";
+
+  /* ─── DOM helpers ─── */
+  const $ = id => document.getElementById(id);
+  const tooltip = $("tooltip");
+
+  /* ─── State ─── */
+  let RAW_DATA = null;  // { weeks: [...], series: { "SPY": [...], "TAIEX": [...], ... } }
+  let ANALYSIS = null;  // result of runAnalysis
+  let leadChart = null;
+  let corrChart = null;
+
+  /* ─── Demo data generator ─── */
+  function generateDemoData() {
+    const startDate = new Date("2018-01-05");
+    const weeks = [];
+    const N = 340;
+
+    // Phase definitions: { until (fraction of N), usBias, lagWeeks }
+    // lagWeeks > 0 → US leads; < 0 → TW leads; 0 → sync
+    const phases = [
+      { until: 0.12, usBias:  0.003, lag: 6  },  // 2018 H1: US leads
+      { until: 0.22, usBias: -0.006, lag: 4  },  // 2018 Q4: Trade war, US down first
+      { until: 0.35, usBias:  0.004, lag: 1  },  // 2019: Roughly in sync
+      { until: 0.42, usBias: -0.015, lag: 0  },  // 2020 COVID: Simultaneous
+      { until: 0.55, usBias:  0.008, lag: 8  },  // 2020-21: US tech leads
+      { until: 0.65, usBias:  0.002, lag: -5 },  // 2021 H2: TW semicon leads
+      { until: 0.78, usBias: -0.005, lag: 6  },  // 2022: Rate hikes, US falls first
+      { until: 0.88, usBias:  0.007, lag: 10 },  // 2023: AI boom, NVDA→TSMC
+      { until: 1.01, usBias:  0.003, lag: 2  },  // 2024: More synchronised
+    ];
+
+    function getPhase(i) {
+      const t = i / N;
+      for (const p of phases) if (t < p.until) return p;
+      return phases[phases.length - 1];
+    }
+
+    // Step 1: generate US "signal" returns (shared component + noise)
+    const usSignal = [];
+    for (let i = 0; i < N; i++) {
+      const p = getPhase(i);
+      usSignal.push(p.usBias + (Math.random() - 0.5) * 0.025);
+    }
+
+    // Step 2: TW returns are lagged copies of US signal + own noise
+    // positive lag → TW[i] tracks US[i - lag]  (US leads)
+    // negative lag → US[i] tracks TW[i - |lag|] → TW[i] = own signal that US will follow
+    const twSignal = [];
+    const twOwnSignal = []; // independent signal for TW-leads phases
+    for (let i = 0; i < N; i++) twOwnSignal.push((Math.random() - 0.5) * 0.025);
+
+    for (let i = 0; i < N; i++) {
+      const p = getPhase(i);
+      const noise = (Math.random() - 0.5) * 0.015;
+      if (p.lag >= 0) {
+        const src = i - p.lag;
+        const signal = src >= 0 ? usSignal[src] : 0;
+        twSignal.push(signal * 0.8 + noise);
+      } else {
+        // TW leads: TW has its own signal, US will copy it later
+        twSignal.push(twOwnSignal[i] * 1.2 + p.usBias * 0.5 + noise);
+      }
+    }
+
+    // Patch US returns in TW-leads phases to track TW with delay
+    for (let i = 0; i < N; i++) {
+      const p = getPhase(i);
+      if (p.lag < 0) {
+        const absLag = Math.abs(p.lag);
+        const src = i - absLag;
+        if (src >= 0) {
+          usSignal[i] = twOwnSignal[src] * 0.7 + (Math.random() - 0.5) * 0.015;
+        }
+      }
+    }
+
+    // Step 3: convert returns → price series
+    let spyP = 265, qqqP = 165, nvdaP = 35;
+    let taiexP = 10800, tw0050P = 82, tsmcP = 230;
+    const spy = [], qqq = [], nvda = [];
+    const taiex = [], tw0050 = [], tsmc = [];
+
+    for (let i = 0; i < N; i++) {
+      const d = new Date(startDate);
+      d.setDate(d.getDate() + i * 7);
+      weeks.push(d.toISOString().slice(0, 10));
+
+      const ur = usSignal[i];
+      const tr = twSignal[i];
+      spyP  *= (1 + ur);
+      qqqP  *= (1 + ur * 1.15 + (Math.random()-0.5)*0.008);
+      nvdaP *= (1 + ur * 1.6  + (Math.random()-0.5)*0.015);
+      taiexP  *= (1 + tr);
+      tw0050P *= (1 + tr * 1.05 + (Math.random()-0.5)*0.006);
+      tsmcP   *= (1 + tr * 1.4  + (Math.random()-0.5)*0.012);
+
+      spy.push(+spyP.toFixed(2));
+      qqq.push(+qqqP.toFixed(2));
+      nvda.push(+nvdaP.toFixed(2));
+      taiex.push(+taiexP.toFixed(0));
+      tw0050.push(+tw0050P.toFixed(2));
+      tsmc.push(+tsmcP.toFixed(0));
+    }
+
+    return {
+      weeks,
+      series: {
+        "SPY": spy, "QQQ": qqq, "NVDA": nvda,
+        "加權指數": taiex, "0050": tw0050, "台積電": tsmc
+      },
+      usTickers: ["SPY", "QQQ", "NVDA"],
+      twTickers: ["加權指數", "0050", "台積電"]
+    };
+  }
+
+  /* ─── Data parsing ─── */
+  function parseCSV(text) {
+    const lines = text.trim().split("\n");
+    const headers = lines[0].split(",").map(h => h.trim());
+    const weekIdx = headers.findIndex(h => /week|date/i.test(h));
+    if (weekIdx < 0) throw new Error("找不到日期欄位（需含 week 或 date）");
+
+    const series = {};
+    const weeks = [];
+    headers.forEach((h, i) => { if (i !== weekIdx) series[h] = []; });
+
+    for (let r = 1; r < lines.length; r++) {
+      const cols = lines[r].split(",");
+      if (cols.length < 2) continue;
+      weeks.push(cols[weekIdx].trim());
+      headers.forEach((h, i) => {
+        if (i !== weekIdx) series[h].push(parseFloat(cols[i]) || null);
+      });
+    }
+    const allKeys = Object.keys(series);
+    return {
+      weeks, series,
+      usTickers: allKeys.filter(k => /spy|qqq|nvda|soxx|smh|xlk/i.test(k)),
+      twTickers: allKeys.filter(k => /taiex|0050|2330|台|加權/i.test(k))
+    };
+  }
+
+  function parseJSON(obj) {
+    if (obj.weeks && obj.series) return obj;
+    if (Array.isArray(obj)) {
+      const weeks = [];
+      const series = {};
+      const keys = Object.keys(obj[0]).filter(k => !/week|date/i.test(k));
+      const dateKey = Object.keys(obj[0]).find(k => /week|date/i.test(k));
+      keys.forEach(k => series[k] = []);
+      obj.forEach(row => {
+        weeks.push(row[dateKey]);
+        keys.forEach(k => series[k].push(parseFloat(row[k]) || null));
+      });
+      const allKeys = Object.keys(series);
+      return {
+        weeks, series,
+        usTickers: allKeys.filter(k => /spy|qqq|nvda|soxx|smh|xlk/i.test(k)),
+        twTickers: allKeys.filter(k => /taiex|0050|2330|台|加權/i.test(k))
+      };
+    }
+    throw new Error("JSON 格式不符，需要 { weeks, series } 或陣列形式");
+  }
+
+  /* ─── Core: Rolling cross-correlation ─── */
+  function weeklyReturns(prices) {
+    const ret = [null];
+    for (let i = 1; i < prices.length; i++) {
+      if (prices[i] == null || prices[i-1] == null || prices[i-1] === 0) {
+        ret.push(null);
+      } else {
+        ret.push(prices[i] / prices[i-1] - 1);
+      }
+    }
+    return ret;
+  }
+
+  function pearson(a, b) {
+    let mx = 0, my = 0, n = 0;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] != null && b[i] != null) { mx += a[i]; my += b[i]; n++; }
+    }
+    if (n < 6) return NaN;
+    mx /= n; my /= n;
+    let sxx = 0, syy = 0, sxy = 0;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] == null || b[i] == null) continue;
+      const dx = a[i] - mx, dy = b[i] - my;
+      sxx += dx*dx; syy += dy*dy; sxy += dx*dy;
+    }
+    if (sxx === 0 || syy === 0) return NaN;
+    return sxy / Math.sqrt(sxx * syy);
+  }
+
+  function rollingLeadLag(usRet, twRet, windowSize, maxLag) {
+    const N = usRet.length;
+    const results = [];
+
+    for (let center = 0; center < N; center++) {
+      const wStart = Math.max(0, center - Math.floor(windowSize/2));
+      const wEnd = Math.min(N, center + Math.ceil(windowSize/2));
+
+      let bestLag = 0, bestCorr = -2;
+
+      for (let lag = -maxLag; lag <= maxLag; lag++) {
+        const a = [], b = [];
+        for (let i = wStart; i < wEnd; i++) {
+          const j = i + lag;
+          if (j < 0 || j >= N) continue;
+          if (usRet[i] != null && twRet[j] != null) {
+            a.push(usRet[i]);
+            b.push(twRet[j]);
+          }
+        }
+        if (a.length < 8) continue;
+        const r = pearson(a, b);
+        if (!isNaN(r) && r > bestCorr) {
+          bestCorr = r;
+          bestLag = lag;
+        }
+      }
+
+      results.push({
+        idx: center,
+        bestLag: bestCorr > -2 ? bestLag : 0,
+        bestCorr: bestCorr > -2 ? bestCorr : 0,
+        type: bestCorr < 0.2 ? "weak"
+            : Math.abs(bestLag) <= 1 ? "sync"
+            : bestLag > 0 ? "us_lead"
+            : "tw_lead"
+      });
+    }
+    return results;
+  }
+
+  /* ─── Phase segmentation ─── */
+  function segmentPhases(results, weeks) {
+    if (!results.length) return [];
+    const phases = [];
+    let current = { type: results[0].type, start: 0, end: 0, lags: [results[0].bestLag], corrs: [results[0].bestCorr] };
+
+    for (let i = 1; i < results.length; i++) {
+      if (results[i].type === current.type) {
+        current.end = i;
+        current.lags.push(results[i].bestLag);
+        current.corrs.push(results[i].bestCorr);
+      } else {
+        phases.push({ ...current });
+        current = { type: results[i].type, start: i, end: i, lags: [results[i].bestLag], corrs: [results[i].bestCorr] };
+      }
+    }
+    phases.push({ ...current });
+
+    // Merge very short phases (< 4 weeks) into neighbors
+    const merged = [];
+    for (const p of phases) {
+      const dur = p.end - p.start + 1;
+      if (dur < 4 && merged.length > 0) {
+        const prev = merged[merged.length - 1];
+        prev.end = p.end;
+        prev.lags.push(...p.lags);
+        prev.corrs.push(...p.corrs);
+      } else {
+        merged.push(p);
+      }
+    }
+    return merged.map(p => ({
+      ...p,
+      startDate: weeks[p.start],
+      endDate: weeks[p.end],
+      avgLag: +(p.lags.reduce((s,v) => s+v, 0) / p.lags.length).toFixed(1),
+      avgCorr: +(p.corrs.reduce((s,v) => s+v, 0) / p.corrs.length).toFixed(3),
+      maxCorr: +Math.max(...p.corrs).toFixed(3),
+      duration: p.end - p.start + 1
+    }));
+  }
+
+  /* ─── Narrative generation ─── */
+  function generateNarrative(phase, usName, twName) {
+    const { type, startDate, endDate, avgLag, avgCorr, duration } = phase;
+    const absLag = Math.abs(avgLag).toFixed(0);
+    const startY = startDate.slice(0, 4);
+    const startM = parseInt(startDate.slice(5, 7));
+    const startQ = "Q" + (Math.ceil(startM / 3));
+    const endY = endDate.slice(0, 4);
+    const endM = parseInt(endDate.slice(5, 7));
+    const endQ = "Q" + (Math.ceil(endM / 3));
+    const period = startY === endY ? `${startY} ${startQ}–${endQ}` : `${startY} ${startQ} – ${endY} ${endQ}`;
+
+    const corrDesc = avgCorr > 0.7 ? "非常強" : avgCorr > 0.5 ? "強" : avgCorr > 0.3 ? "中等" : "偏弱";
+    const corrEmoji = avgCorr > 0.5 ? "🔗" : avgCorr > 0.3 ? "〰️" : "❓";
+
+    const usLeadReasons = [
+      `美國市場情緒、資金流向或基本面變化需要時間傳導到台灣。`,
+      `美國科技股的財報或展望先行定價，台灣供應鏈股價隨後反映訂單變化。`,
+      `美國聯準會政策或經濟數據先衝擊美股，台股延遲反應。`
+    ];
+    const twLeadReasons = [
+      `台灣供應鏈端可能先感受到訂單增減，比美國終端需求數據更早見頂/見底。`,
+      `亞洲半導體產能利用率、記憶體報價等指標先行變動，隨後帶動美國科技股。`,
+      `台灣出口數據或月營收先行揭露了需求端的轉折。`
+    ];
+
+    const pickReason = (arr) => arr[Math.floor(Math.abs(avgLag * 7 + avgCorr * 13) % arr.length)];
+
+    let text;
+    switch (type) {
+      case "us_lead":
+        text = `${corrEmoji} 這段時間，看 ${usName} 就能大致預判 ${twName} 接下來的方向。`
+             + ` ${usName} 平均領先 ${twName} 約 <b>${absLag} 週</b>，相關性${corrDesc}（r = ${avgCorr}）。`
+             + (avgCorr > 0.4 && parseInt(absLag) >= 3
+                ? `<br>→ 白話說：${usName} 漲了之後，大約 ${absLag} 週後 ${twName} 也會跟著漲（反之亦然）。`
+                  + `<br>→ 可能原因：${pickReason(usLeadReasons)}`
+                : ` 不過領先幅度不大，參考性有限。`);
+        break;
+      case "tw_lead":
+        text = `${corrEmoji} 有趣的反轉——這段時間 ${twName} 反而走在前面。`
+             + ` ${twName} 領先 ${usName} 約 <b>${absLag} 週</b>，相關性${corrDesc}（r = ${avgCorr}）。`
+             + (avgCorr > 0.4 && parseInt(absLag) >= 3
+                ? `<br>→ 白話說：${twName} 先動，${usName} 約 ${absLag} 週後才跟上。`
+                  + `<br>→ 可能原因：${pickReason(twLeadReasons)}`
+                : ` 不過信號不算特別強，需要其他佐證。`);
+        break;
+      case "sync":
+        text = `${corrEmoji} 兩個市場幾乎在同一個節拍上跳舞。`
+             + ` 領先落後差距在 1 週以內，相關性${corrDesc}（r = ${avgCorr}）。`
+             + `<br>→ 白話說：美股和台股同步漲跌，沒有明顯的「先來後到」。`
+             + `<br>→ 常見於全球性事件（聯準會決策、疫情、地緣風險）同時衝擊兩個市場的時候。`;
+        break;
+      case "weak":
+      default:
+        text = `❓ 這段時間 ${usName} 與 ${twName} 各走各的路。`
+             + ` 統計關聯性偏弱（r = ${avgCorr}），不宜用其中一方預測另一方。`
+             + `<br>→ 白話說：美股漲不代表台股會漲，反之亦然。兩者可能各自受不同因子驅動。`;
+        break;
+    }
+    return { period, text };
+  }
+
+  function generateOverallSummary(phases, results, usName, twName) {
+    const total = results.length;
+    const usLeadWeeks = results.filter(r => r.type === "us_lead").length;
+    const twLeadWeeks = results.filter(r => r.type === "tw_lead").length;
+    const syncWeeks = results.filter(r => r.type === "sync").length;
+    const weakWeeks = results.filter(r => r.type === "weak").length;
+
+    const usLeadPct = ((usLeadWeeks / total) * 100).toFixed(0);
+    const twLeadPct = ((twLeadWeeks / total) * 100).toFixed(0);
+    const syncPct = ((syncWeeks / total) * 100).toFixed(0);
+    const weakPct = ((weakWeeks / total) * 100).toFixed(0);
+
+    const validResults = results.filter(r => r.type !== "weak");
+    const avgAllLag = validResults.reduce((s, r) => s + r.bestLag, 0) / Math.max(1, validResults.length);
+    const avgCorr = validResults.reduce((s, r) => s + r.bestCorr, 0) / Math.max(1, validResults.length);
+
+    // Find the longest phase
+    const longest = phases.reduce((best, p) => p.duration > best.duration ? p : best, phases[0]);
+    const longestLabel = { us_lead: `${usName} 領先`, tw_lead: `${twName} 領先`, sync: "同步", weak: "弱關聯" }[longest.type];
+
+    let dominant, takeaway;
+    if (usLeadWeeks > twLeadWeeks && usLeadWeeks > syncWeeks) {
+      dominant = `大局觀：在這段歷史中，${usName} 扮演「帶頭大哥」的角色居多`;
+      takeaway = `如果你要用美台之間的領先落後關係做判斷，盯住 ${usName} 的走勢是相對合理的策略`;
+    } else if (twLeadWeeks > usLeadWeeks && twLeadWeeks > syncWeeks) {
+      dominant = `大局觀：${twName} 領先 ${usName} 的情況意外地多`;
+      takeaway = `台灣供應鏈的動向可能比想像中更早反映全球科技需求的變化`;
+    } else if (syncWeeks >= usLeadWeeks && syncWeeks >= twLeadWeeks) {
+      dominant = `大局觀：兩個市場大部分時候是同步的`;
+      takeaway = `想用時間差做套利空間有限，兩個市場受到的全球因子影響大致同步`;
+    } else {
+      dominant = `大局觀：美台之間的領先/落後關係並不固定，隨市場環境切換`;
+      takeaway = `不能假設永遠是誰領先誰，需要動態觀察`;
+    }
+
+    return `<b>📊 統計概覽</b>（共 ${total} 週）：`
+         + `${usName} 領先 <b>${usLeadPct}%</b>（${usLeadWeeks} 週）｜`
+         + `${twName} 領先 <b>${twLeadPct}%</b>（${twLeadWeeks} 週）｜`
+         + `同步 <b>${syncPct}%</b>（${syncWeeks} 週）｜`
+         + `關聯弱 ${weakPct}%（${weakWeeks} 週）`
+         + `<br><br><b>🎯 ${dominant}。</b>`
+         + `<br>最長的一段是「${longestLabel}」，持續了 ${longest.duration} 週（${longest.startDate} 至 ${longest.endDate}）。`
+         + (Math.abs(avgAllLag) > 2
+            ? ` 排除弱關聯期間後，平均領先方向為 <b>${avgAllLag > 0 ? usName : twName} 領先 ${Math.abs(avgAllLag).toFixed(1)} 週</b>。`
+            : ` 排除弱關聯後，平均只差 ${Math.abs(avgAllLag).toFixed(1)} 週，幾乎同步。`)
+         + `<br><br><b>💡 白話結論：</b>${takeaway}。`
+         + ` 不過請注意，這種關係會隨時間變化——往下滑看「人話時間線」了解每段時期的細節。`;
+  }
+
+  /* ─── Chart rendering ─── */
+  const typeColor = { us_lead: "#4ade80", tw_lead: "#f59e0b", sync: "#8b5cf6", weak: "#475569" };
+
+  function drawTimelineStrip(results, weeks) {
+    const canvas = $("stripCanvas");
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * 2;
+    canvas.height = rect.height * 2;
+    canvas.style.width = rect.width + "px";
+    canvas.style.height = rect.height + "px";
+    const ctx = canvas.getContext("2d");
+    ctx.scale(2, 2);
+
+    const w = rect.width;
+    const h = rect.height;
+    const blockW = w / results.length;
+
+    for (let i = 0; i < results.length; i++) {
+      ctx.fillStyle = typeColor[results[i].type];
+      ctx.fillRect(i * blockW, 0, blockW + 0.5, h);
+    }
+
+    $("stripStart").textContent = weeks[0];
+    $("stripEnd").textContent = weeks[weeks.length - 1];
+
+    // Hover
+    canvas.parentElement.onmousemove = function(e) {
+      const br = canvas.parentElement.getBoundingClientRect();
+      const x = e.clientX - br.left;
+      const idx = Math.floor((x / br.width) * results.length);
+      if (idx < 0 || idx >= results.length) { tooltip.className = ""; return; }
+      const r = results[idx];
+      const typeLabel = { us_lead: "美股領先", tw_lead: "台股領先", sync: "同步", weak: "弱關聯" }[r.type];
+      tooltip.innerHTML = `<b>${weeks[idx]}</b><br>狀態：${typeLabel}<br>領先週數：${r.bestLag > 0 ? "美股 +" : r.bestLag < 0 ? "台股 +" : ""}${Math.abs(r.bestLag)} 週<br>相關性：${r.bestCorr.toFixed(3)}`;
+      tooltip.className = "show";
+      tooltip.style.left = (e.clientX + 12) + "px";
+      tooltip.style.top = (e.clientY - 60) + "px";
+    };
+    canvas.parentElement.onmouseleave = function() { tooltip.className = ""; };
+  }
+
+  function drawLeadChart(results, weeks) {
+    const ctx = $("leadChart").getContext("2d");
+    if (leadChart) leadChart.destroy();
+
+    const labels = weeks;
+    const data = results.map(r => r.bestLag);
+    const colors = results.map(r => typeColor[r.type]);
+
+    leadChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label: "領先週數（正=美股領先）",
+          data,
+          backgroundColor: colors,
+          borderWidth: 0,
+          barPercentage: 1.0,
+          categoryPercentage: 1.0
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                const v = ctx.raw;
+                return v > 0 ? `美股領先 ${v} 週` : v < 0 ? `台股領先 ${Math.abs(v)} 週` : "同步";
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: "#8b9cb3", maxTicksLimit: 15, font: { size: 10 } },
+            grid: { color: "rgba(255,255,255,0.04)" }
+          },
+          y: {
+            ticks: {
+              color: "#8b9cb3",
+              callback: v => v > 0 ? `美+${v}w` : v < 0 ? `台+${Math.abs(v)}w` : "0"
+            },
+            grid: { color: "rgba(255,255,255,0.06)" }
+          }
+        }
+      }
+    });
+  }
+
+  function drawCorrChart(results, weeks) {
+    const ctx = $("corrChart").getContext("2d");
+    if (corrChart) corrChart.destroy();
+
+    corrChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: weeks,
+        datasets: [
+          {
+            label: "滾動相關係數",
+            data: results.map(r => r.bestCorr),
+            borderColor: "#38bdf8",
+            backgroundColor: "rgba(56,189,248,0.1)",
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 1.5
+          },
+          {
+            label: "強關聯門檻 (0.5)",
+            data: results.map(() => 0.5),
+            borderColor: "rgba(74,222,128,0.4)",
+            borderDash: [5, 5],
+            pointRadius: 0,
+            borderWidth: 1
+          },
+          {
+            label: "弱關聯門檻 (0.2)",
+            data: results.map(() => 0.2),
+            borderColor: "rgba(245,158,11,0.4)",
+            borderDash: [5, 5],
+            pointRadius: 0,
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: "#e7ecf3", font: { size: 11 } } } },
+        scales: {
+          x: {
+            ticks: { color: "#8b9cb3", maxTicksLimit: 15, font: { size: 10 } },
+            grid: { color: "rgba(255,255,255,0.04)" }
+          },
+          y: {
+            min: -0.2, max: 1,
+            ticks: { color: "#8b9cb3" },
+            grid: { color: "rgba(255,255,255,0.06)" }
+          }
+        }
+      }
+    });
+  }
+
+  function renderNarratives(phases, usName, twName) {
+    const list = $("narrativeList");
+    list.innerHTML = "";
+    const cssClass = { us_lead: "us-lead", tw_lead: "tw-lead", sync: "sync", weak: "" };
+    const tagClass = { us_lead: "us", tw_lead: "tw", sync: "sy", weak: "" };
+    const tagLabel = { us_lead: "美股領先", tw_lead: "台股領先", sync: "同步", weak: "弱關聯" };
+
+    phases.forEach(p => {
+      const { period, text } = generateNarrative(p, usName, twName);
+      const el = document.createElement("div");
+      el.className = "narrative-block " + (cssClass[p.type] || "");
+      el.innerHTML = `
+        <div class="period">${p.startDate} → ${p.endDate}（${p.duration} 週）</div>
+        <span class="tag ${tagClass[p.type]}">${tagLabel[p.type]}</span>
+        <span class="tag" style="background:rgba(255,255,255,0.05);color:var(--muted)">平均領先 ${Math.abs(p.avgLag)} 週 · r = ${p.avgCorr}</span>
+        <div class="body" style="margin-top:0.5rem">${text}</div>
+      `;
+      list.appendChild(el);
+    });
+  }
+
+  /* ─── Main analysis ─── */
+  function runAnalysis() {
+    if (!RAW_DATA) return;
+    const usKey = $("selUS").value;
+    const twKey = $("selTW").value;
+    const window = parseInt($("selWindow").value);
+    const maxLag = parseInt($("selMaxLag").value);
+
+    if (!usKey || !twKey) return;
+
+    const usPrices = RAW_DATA.series[usKey];
+    const twPrices = RAW_DATA.series[twKey];
+    if (!usPrices || !twPrices) return;
+
+    const usRet = weeklyReturns(usPrices);
+    const twRet = weeklyReturns(twPrices);
+
+    const results = rollingLeadLag(usRet, twRet, window, maxLag);
+    const phases = segmentPhases(results, RAW_DATA.weeks);
+
+    ANALYSIS = { results, phases, usKey, twKey };
+
+    // Render
+    $("resultsArea").style.display = "block";
+    $("summaryText").textContent = generateOverallSummary(phases, results, usKey, twKey);
+    drawTimelineStrip(results, RAW_DATA.weeks);
+    drawLeadChart(results, RAW_DATA.weeks);
+    drawCorrChart(results, RAW_DATA.weeks);
+    renderNarratives(phases, usKey, twKey);
+  }
+
+  /* ─── Data loading ─── */
+  function onDataLoaded(data) {
+    RAW_DATA = data;
+    $("configCard").style.opacity = "1";
+    $("configCard").style.pointerEvents = "auto";
+    $("loadStatus").textContent = `已載入 ${data.weeks.length} 週、${Object.keys(data.series).length} 個序列。`;
+    $("loadStatus").className = "ok";
+
+    // Populate selects
+    const usSel = $("selUS");
+    const twSel = $("selTW");
+    usSel.innerHTML = "";
+    twSel.innerHTML = "";
+
+    const usKeys = data.usTickers || Object.keys(data.series).slice(0, Math.ceil(Object.keys(data.series).length / 2));
+    const twKeys = data.twTickers || Object.keys(data.series).slice(Math.ceil(Object.keys(data.series).length / 2));
+    const allKeys = Object.keys(data.series);
+
+    allKeys.forEach(k => {
+      const o1 = document.createElement("option");
+      o1.value = k; o1.textContent = k;
+      if (usKeys.includes(k)) o1.selected = usSel.options.length === 0;
+      usSel.appendChild(o1);
+      const o2 = document.createElement("option");
+      o2.value = k; o2.textContent = k;
+      if (twKeys.includes(k)) o2.selected = twSel.options.length === 0;
+      twSel.appendChild(o2);
+    });
+
+    // Auto-select first US and TW
+    if (usKeys.length) usSel.value = usKeys[0];
+    if (twKeys.length) twSel.value = twKeys[0];
+  }
+
+  $("fileIn").addEventListener("change", function(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = function() {
+      try {
+        if (f.name.endsWith(".csv")) {
+          onDataLoaded(parseCSV(reader.result));
+        } else {
+          onDataLoaded(parseJSON(JSON.parse(reader.result)));
+        }
+      } catch (err) {
+        $("loadStatus").textContent = "解析失敗：" + err.message;
+        $("loadStatus").className = "err";
+      }
+    };
+    reader.readAsText(f);
+  });
+
+  $("btnRun").addEventListener("click", runAnalysis);
+
+  $("btnExport").addEventListener("click", function() {
+    if (!ANALYSIS) return alert("請先執行分析");
+    const output = {
+      usKey: ANALYSIS.usKey,
+      twKey: ANALYSIS.twKey,
+      phases: ANALYSIS.phases.map(p => ({
+        ...p,
+        narrative: generateNarrative(p, ANALYSIS.usKey, ANALYSIS.twKey)
+      })),
+      weeklyResults: ANALYSIS.results.map((r, i) => ({
+        week: RAW_DATA.weeks[i],
+        bestLag: r.bestLag,
+        bestCorr: +r.bestCorr.toFixed(4),
+        type: r.type
+      }))
+    };
+    const blob = new Blob([JSON.stringify(output, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "lead_lag_analysis.json";
+    a.click();
+  });
+
+  // Resize handling for timeline strip
+  let resizeTimer;
+  window.addEventListener("resize", function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      if (ANALYSIS) drawTimelineStrip(ANALYSIS.results, RAW_DATA.weeks);
+    }, 200);
+  });
+
+  // Auto-load demo data on page load
+  onDataLoaded(generateDemoData());
+  setTimeout(runAnalysis, 150);
+
+})();
+</script>
+</body>
+</html>

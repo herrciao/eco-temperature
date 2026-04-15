@@ -113,7 +113,109 @@ TRAIN_FRAC = 0.70
 # Ridge regression regularisation strength for SPY composite fitting
 RIDGE_ALPHA: float = 1.0
 
-# Event backtest example rules (percent thresholds on raw momentum)
+# ─── Supply Chain Mapping System ──────────────────────────────────────────────
+
+# Demand-side indices (US market)
+DEMAND_TICKERS: Dict[str, List[str]] = {
+    "consumer_electronics": ["AAPL"],
+    "cloud_hyperscaler":    ["MSFT", "GOOGL", "AMZN", "META"],
+    "ai_compute":           ["NVDA", "AMD"],
+}
+
+# Supply-side baskets (Taiwan + US infra ETFs)
+# Format: { group_key: { label, members: [(yahoo_ticker, display_name), ...] } }
+SUPPLY_CHAIN_GROUPS: Dict[str, Dict] = {
+    "A_foundry": {
+        "label": "台灣晶圓代工",
+        "members": [
+            ("2330.TW", "台積電"),
+            ("2303.TW", "聯電"),
+        ],
+    },
+    "B_ic_design": {
+        "label": "台灣 AI / IC 設計",
+        "members": [
+            ("2454.TW", "聯發科"),
+            ("3661.TW", "世芯"),
+            ("3443.TW", "創意"),
+            ("3035.TW", "智原"),
+            ("6150.TW", "撼訊"),
+        ],
+    },
+    "C_packaging": {
+        "label": "台灣 AI 伺服器",
+        "members": [
+            ("3711.TW", "日月光投控"),
+            ("2325.TW", "矽品"),
+        ],
+    },
+    "D_server": {
+        "label": "台灣散熱 & 電源",
+        "members": [
+            ("2382.TW", "廣達"),
+            ("3231.TW", "緯創"),
+            ("2356.TW", "英業達"),
+            ("6669.TW", "緯穎"),
+            ("2317.TW", "鴻海"),
+            ("2376.TW", "技嘉"),
+            ("2377.TW", "微星"),
+        ],
+    },
+    "E_power_thermal": {
+        "label": "台灣散熱 & 電源",
+        "members": [
+            ("2308.TW", "台達電"),
+            ("2301.TW", "光寶科"),
+            ("3017.TW", "奇鋐"),
+            ("3563.TW", "雙鴻"),
+            ("3653.TW", "健策"),
+        ],
+    },
+    "F_memory": {
+        "label": "台灣記憶體",
+        "members": [
+            ("2408.TW", "南亞科"),
+            ("2344.TW", "華邦電"),
+            ("2337.TW", "旺宏"),
+        ],
+    },
+    "G_power_infra": {
+        "label": "美國電力基礎設施",
+        "members": [
+            ("XLU", "公用事業 ETF"),
+            ("ICLN", "清潔能源 ETF"),
+            ("NEE", "NextEra Energy"),
+        ],
+    },
+}
+
+# Flat list of all supply chain tickers (for fetching)
+SUPPLY_CHAIN_ALL_TICKERS: List[str] = [
+    t for g in SUPPLY_CHAIN_GROUPS.values()
+    for t, _ in g["members"]
+]
+
+# Demand index tickers (for fetching)
+DEMAND_ALL_TICKERS: List[str] = [
+    t for tickers in DEMAND_TICKERS.values()
+    for t in tickers
+]
+
+# AI amplifier chain definition (ordered DAG for visualization)
+AI_AMPLIFIER_CHAIN = [
+    {"id": "nvda",         "label": "AI 算力需求 (NVDA)",    "tickers": ["NVDA"]},
+    {"id": "foundry",      "label": "先進製程 (TSMC)",        "tickers": ["2330.TW"]},
+    {"id": "cowos",        "label": "先進封裝 CoWoS",          "tickers": ["3711.TW", "2325.TW"]},
+    {"id": "hbm",          "label": "HBM 記憶體",              "tickers": ["2408.TW"]},
+    {"id": "server",       "label": "伺服器組裝",              "tickers": ["2382.TW", "6669.TW"]},
+    {"id": "thermal",      "label": "散熱 & 電源",             "tickers": ["3017.TW", "2308.TW"]},
+    {"id": "datacenter",   "label": "資料中心 & 電力",         "tickers": ["XLU", "NEE"]},
+]
+
+# Supply chain data start date
+SUPPLY_CHAIN_START = "2016-01-01"
+
+# ─── Event backtest example rules (percent thresholds on raw momentum) ────────
 EVENT_RULES = [
     {
         "name": "copper_bdry_risk_on",

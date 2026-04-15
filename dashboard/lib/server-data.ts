@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import type { CurrentRecord, DashboardData, PanelRow } from "./types";
+import type { CurrentRecord, DashboardData, PanelRow, SupplyChainData } from "./types";
 
 /** Resolve `output/web` whether `npm run dev` is started from `dashboard/` or project root. */
 function findWebDir(): string {
@@ -29,4 +29,20 @@ export function loadDashboardData(): DashboardData {
   const raw = JSON.parse(fs.readFileSync(currentPath, "utf-8")) as CurrentRecord;
   const panel = JSON.parse(fs.readFileSync(panelPath, "utf-8")) as PanelRow[];
   return { current: raw, panel };
+}
+
+/** Load supply_chain_data.json if available, returns null otherwise. */
+export function loadSupplyChainData(): SupplyChainData | null {
+  const candidates = [
+    path.join(process.cwd(), "..", "research", "output", "supply_chain_data.json"),
+    path.join(process.cwd(), "research", "output", "supply_chain_data.json"),
+    path.join(process.cwd(), "..", "output", "web", "supply_chain_data.json"),
+    path.join(process.cwd(), "data", "web", "supply_chain_data.json"),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      return JSON.parse(fs.readFileSync(p, "utf-8")) as SupplyChainData;
+    }
+  }
+  return null;
 }

@@ -50,3 +50,72 @@ export interface DashboardData {
   current: CurrentRecord;
   panel: PanelRow[];
 }
+
+// ─── Supply Chain Types ────────────────────────────────────────────────────
+
+export interface LeadLagSummary {
+  us_lead_pct: number;
+  tw_lead_pct: number;
+  sync_pct: number;
+  weak_pct: number;
+  avg_lag: number;
+  avg_corr: number;
+}
+
+export interface LeadLagPhase {
+  type: "us_lead" | "tw_lead" | "sync" | "weak";
+  start_date: string;
+  end_date: string;
+  duration: number;
+  avg_lag: number;
+  avg_corr: number;
+  max_corr: number;
+}
+
+export interface LeadLagPair {
+  demand_key: string;
+  basket_key: string;
+  weekly_lag: number[];
+  weekly_corr: (number | null)[];
+  weekly_type: string[];
+  phases: LeadLagPhase[];
+  summary: LeadLagSummary;
+}
+
+export interface DemandGroup {
+  label: string;
+  members: string[];
+  index: (number | null)[];
+  pulse: (number | null)[];
+  pulse_latest: number | null;
+}
+
+export interface BasketGroup {
+  label: string;
+  members: [string, string][];
+  index: (number | null)[];
+  momentum_13w: (number | null)[];
+  momentum_latest: number | null;
+}
+
+export interface AmplifierNode {
+  id: string;
+  label: string;
+  tickers: string[];
+  index: (number | null)[] | null;
+  lag_vs_nvda: number | null;
+  corr_vs_nvda: number | null;
+}
+
+export interface SupplyChainData {
+  generated: string;
+  weeks: string[];
+  window_weeks: number;
+  max_lag_weeks: number;
+  demand_groups: Record<string, DemandGroup>;
+  baskets: Record<string, BasketGroup>;
+  lead_lag: Record<string, LeadLagPair>;
+  amplifier_chain: AmplifierNode[];
+  latest_week: string | null;
+  total_pairs: number;
+}
