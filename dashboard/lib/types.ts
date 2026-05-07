@@ -119,3 +119,36 @@ export interface SupplyChainData {
   latest_week: string | null;
   total_pairs: number;
 }
+
+// ─── Shortage Radar Types ─────────────────────────────────────────────────
+
+export interface ShortageTrailPoint {
+  label: string;
+  date: string;
+  value: number | null;
+  value_fmt: number | string | null;
+  fallback?: string;
+}
+
+export interface ShortageSignal {
+  id: string;
+  category: string;
+  category_zh: string;
+  display_zh: string;
+  display_en: string;
+  source: string;
+  score: number | null;
+  latest: number | null;
+  latest_date: string | null;
+  quarter_trail: ShortageTrailPoint[];
+  notes?: string;
+}
+
+export interface ShortagePayload {
+  product: string;
+  version: number;
+  generated_at: string;
+  trail_legend: string;
+  categories: string[];
+  signals: ShortageSignal[];
+}

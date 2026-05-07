@@ -1,10 +1,12 @@
 "use client";
 
 import type { DemandGroup } from "@/lib/types";
+import { InfoButton } from "@/components/BasketInfoModal";
 
 interface Props {
   demandGroups: Record<string, DemandGroup>;
   latestWeek: string | null;
+  rangeEnd?: number;
 }
 
 const DEMAND_LABELS: Record<string, string> = {
@@ -27,10 +29,21 @@ function pulseLabel(pulse: number): string {
   return "偏弱";
 }
 
-function detectTheme(groups: Record<string, DemandGroup>): { label: string; color: string } {
-  const ai = groups.ai_compute?.pulse_latest ?? 50;
-  const cloud = groups.cloud_hyperscaler?.pulse_latest ?? 50;
-  const ce = groups.consumer_electronics?.pulse_latest ?? 50;
+function detectTheme(
+  groups: Record<string, DemandGroup>,
+  rangeEnd?: number,
+): { label: string; color: string } {
+  function getPulse(key: string): number {
+    const g = groups[key];
+    if (!g) return 50;
+    if (rangeEnd != null && g.pulse && rangeEnd < g.pulse.length) {
+      return g.pulse[rangeEnd] ?? g.pulse_latest ?? 50;
+    }
+    return g.pulse_latest ?? 50;
+  }
+  const ai = getPulse("ai_compute");
+  const cloud = getPulse("cloud_hyperscaler");
+  const ce = getPulse("consumer_electronics");
   if (ai > 65) return { label: "AI 基礎設施擴張", color: "#4ade80" };
   if (cloud > 65) return { label: "雲端資本支出加速", color: "#f59e0b" };
   if (ce > 65) return { label: "消費電子復甦", color: "#38bdf8" };
@@ -38,8 +51,15 @@ function detectTheme(groups: Record<string, DemandGroup>): { label: string; colo
   return { label: "需求中性觀察", color: "#8b9cb3" };
 }
 
-export function DemandPulse({ demandGroups, latestWeek }: Props) {
-  const theme = detectTheme(demandGroups);
+export function DemandPulse({ demandGroups, latestWeek, rangeEnd }: Props) {
+  const theme = detectTheme(demandGroups, rangeEnd);
+
+  function getPulse(key: string, group: DemandGroup): number {
+    if (rangeEnd != null && group.pulse && rangeEnd < group.pulse.length) {
+      return group.pulse[rangeEnd] ?? group.pulse_latest ?? 50;
+    }
+    return group.pulse_latest ?? 50;
+  }
 
   return (
     <div className="rounded-2xl border border-slate-700/60 bg-slate-900/60 p-5">
@@ -60,7 +80,7 @@ export function DemandPulse({ demandGroups, latestWeek }: Props) {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {Object.entries(demandGroups).map(([key, group]) => {
-          const pulse = group.pulse_latest ?? 50;
+          const pulse = getPulse(key, group);
           const color = pulseColor(pulse);
           const label = pulseLabel(pulse);
           return (
@@ -68,9 +88,10 @@ export function DemandPulse({ demandGroups, latestWeek }: Props) {
               key={key}
               className="rounded-xl border border-slate-700/40 bg-slate-800/50 p-4"
             >
-              <p className="mb-1 text-xs text-slate-400">
-                {DEMAND_LABELS[key] ?? group.label}
-              </p>
+              <div className="mb-1 flex items-center gap-1 text-xs text-slate-400">
+                <span>{DEMAND_LABELS[key] ?? group.label}</span>
+                <InfoButton type="demand" basketKey={key} />
+              </div>
               <div className="flex items-baseline gap-1">
                 <span className="text-2xl font-bold" style={{ color }}>
                   {pulse.toFixed(1)}

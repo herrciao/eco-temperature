@@ -51,6 +51,10 @@ cd dashboard && npm install && npm run dev
 # 瀏覽 http://localhost:3000
 ```
 
+### Shortage Radar（獨立產品）
+
+見 [`shortage-radar/README.md`](shortage-radar/README.md)：免費資料缺貨/緊繃 radar，產出 JSON + 靜態 HTML，**不修改**上方看板程式碼。
+
 一次執行完整管線：
 
 ```bash

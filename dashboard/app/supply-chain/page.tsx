@@ -6,6 +6,7 @@ import { LeadLagMatrix } from "@/components/LeadLagMatrix";
 import { BasketMomentum } from "@/components/BasketMomentum";
 import { SupplyChainFlow } from "@/components/SupplyChainFlow";
 import { NarrativeTimeline } from "@/components/NarrativeTimeline";
+import { TimeRangeSlider } from "@/components/TimeRangeSlider";
 import type { SupplyChainData, LeadLagPair } from "@/lib/types";
 
 const DEMAND_LABELS: Record<string, string> = {
@@ -14,7 +15,8 @@ const DEMAND_LABELS: Record<string, string> = {
   ai_compute: "AI 算力",
 };
 
-const DEMO_MESSAGE = "尚未載入 supply_chain_data.json。請執行 python main.py supply-chain all 並重整頁面。";
+const DEMO_MESSAGE =
+  "尚未載入 supply_chain_data.json。請執行 python main.py supply-chain all 並重整頁面。";
 
 export default function SupplyChainPage() {
   const [data, setData] = useState<SupplyChainData | null>(null);
@@ -23,8 +25,11 @@ export default function SupplyChainPage() {
   const [activeBasket, setActiveBasket] = useState<string>("A_foundry");
   const [matrixMode, setMatrixMode] = useState<"lag" | "corr">("lag");
 
+  // Time range (indices into data.weeks)
+  const [rangeStart, setRangeStart] = useState<number>(0);
+  const [rangeEnd, setRangeEnd] = useState<number>(0);
+
   useEffect(() => {
-    // Try loading from /api/supply-chain route
     fetch("/api/supply-chain")
       .then((r) => {
         if (!r.ok) throw new Error("HTTP " + r.status);
@@ -34,6 +39,15 @@ export default function SupplyChainPage() {
       .catch((e) => setError(e.message));
   }, []);
 
+  // Initialise range when data loads
+  useEffect(() => {
+    if (!data) return;
+    const total = data.weeks.length;
+    const defaultStart = Math.max(0, total - 1 - Math.round(3 * 52.18));
+    setRangeStart(defaultStart);
+    setRangeEnd(total - 1);
+  }, [data]);
+
   if (error) {
     return (
       <main className="min-h-screen bg-slate-950 px-4 py-12 text-slate-100">
@@ -41,8 +55,7 @@ export default function SupplyChainPage() {
           <h1 className="text-xl font-semibold text-amber-200">供應鏈資料未就緒</h1>
           <p className="mt-3 text-slate-300">{DEMO_MESSAGE}</p>
           <pre className="mt-6 overflow-x-auto rounded-lg bg-slate-950 p-4 text-sm text-slate-400">
-            {`python main.py supply-chain fetch
-python main.py supply-chain export`}
+            {`python main.py supply-chain fetch\npython main.py supply-chain export`}
           </pre>
         </div>
       </main>
@@ -78,19 +91,37 @@ python main.py supply-chain export`}
                 美國科技巨頭需求 → 台灣 / 亞洲供應鏈傳導系統
               </p>
             </div>
-            <a href="/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
-              ← 宏觀溫度看板
-            </a>
+            <div className="flex flex-wrap gap-2">
+              <a
+                href="/shortage-radar"
+                className="rounded-xl border border-orange-500/40 bg-orange-500/10 px-3 py-1.5 text-xs text-orange-300 hover:bg-orange-500/20 transition-colors"
+              >
+                Shortage Radar →
+              </a>
+              <a href="/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors self-center">
+                ← 宏觀溫度看板
+              </a>
+            </div>
           </div>
         </header>
+
+        {/* Sticky Time Range Slider */}
+        <TimeRangeSlider
+          totalWeeks={data.weeks.length}
+          weeks={data.weeks}
+          rangeStart={rangeStart}
+          rangeEnd={rangeEnd}
+          onChange={(s, e) => { setRangeStart(s); setRangeEnd(e); }}
+        />
 
         {/* 1. Demand Pulse */}
         <DemandPulse
           demandGroups={data.demand_groups}
-          latestWeek={data.latest_week}
+          latestWeek={data.weeks[rangeEnd] ?? data.latest_week}
+          rangeEnd={rangeEnd}
         />
 
-        {/* 2. Lead-Lag Matrix */}
+        {/* 2. Lead-Lag Matrix + Basket Momentum */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border border-slate-700/60 bg-slate-900/60 p-5">
             <div className="mb-3 flex items-center justify-between gap-3">
@@ -128,11 +159,14 @@ python main.py supply-chain export`}
 
           {/* 3. Basket Momentum */}
           <div className="rounded-2xl border border-slate-700/60 bg-slate-900/60 p-5">
-            <h2 className="mb-3 text-sm font-semibold text-sky-400">
+            <h2 className="mb-1 text-sm font-semibold text-sky-400">
               供應鏈籃子近 13 週動能
             </h2>
-            <p className="mb-4 text-xs text-slate-500">正值 = 向上動能，負值 = 向下動能</p>
-            <BasketMomentum baskets={data.baskets} />
+            <p className="mb-4 text-xs text-slate-500">
+              正值 = 向上動能，負值 = 向下動能 · 點擊{" "}
+              <span className="text-sky-400">ⓘ</span> 查看指數組成
+            </p>
+            <BasketMomentum baskets={data.baskets} rangeEnd={rangeEnd} />
           </div>
         </div>
 
@@ -172,7 +206,7 @@ python main.py supply-chain export`}
           </div>
 
           {/* Basket selector */}
-          <div className="mb-4 flex flex-wrap items-center gap-2">
+          <div className="mb-5 flex flex-wrap items-center gap-2">
             <span className="text-xs text-slate-500">供應鏈籃子：</span>
             {basketKeys.map((bk) => (
               <button
@@ -197,6 +231,9 @@ python main.py supply-chain export`}
               activeDemand
             }
             basketLabel={data.baskets[activeBasket]?.label ?? activeBasket}
+            weeks={data.weeks}
+            rangeStart={rangeStart}
+            rangeEnd={rangeEnd}
           />
         </div>
 
@@ -215,9 +252,7 @@ python main.py supply-chain export`}
                 </code>
                 然後重新整理此頁面。
               </p>
-              <p>
-                資料來源：Yahoo Finance（台股 .TW、美股）；回測範圍 2016 年至今。
-              </p>
+              <p>資料來源：Yahoo Finance（台股 .TW、美股）；回測範圍 2016 年至今。</p>
               <p className="text-slate-600">僅供研究用途，不構成任何投資建議。</p>
             </div>
           </details>

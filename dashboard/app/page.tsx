@@ -61,12 +61,20 @@ cd dashboard && npm run dev`}
                 整合成長、通膨、流動性與風險偏好，提供宏觀環境的一站式概覽。
               </p>
             </div>
-            <a
-              href="/supply-chain"
-              className="rounded-xl border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm text-sky-300 hover:bg-sky-500/20 transition-colors"
-            >
-              供應鏈傳導系統 →
-            </a>
+            <div className="flex flex-wrap gap-2">
+              <a
+                href="/supply-chain"
+                className="rounded-xl border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm text-sky-300 hover:bg-sky-500/20 transition-colors"
+              >
+                供應鏈傳導系統 →
+              </a>
+              <a
+                href="/shortage-radar"
+                className="rounded-xl border border-orange-500/40 bg-orange-500/10 px-4 py-2 text-sm text-orange-300 hover:bg-orange-500/20 transition-colors"
+              >
+                Shortage Radar →
+              </a>
+            </div>
           </div>
         </header>
 

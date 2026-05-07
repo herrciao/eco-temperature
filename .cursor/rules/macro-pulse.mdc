@@ -1,0 +1,120 @@
+---
+description: 宏觀週報／風險監測 SOP — PMI 替代、利率、匯率、台灣出口；與 regime dashboard 互補但不改其代碼。
+alwaysApply: false
+---
+
+# 宏觀脈動週報 SOP — Macro Pulse（厚版）
+
+目的：每週用**同一組固定指標**描述「全球溫度」，避免被單一新聞帶飛。假設**零付費**：FRED + yfinance + 政府公開資料。
+
+---
+
+## 1. 週報固定欄位（顺序不可隨便換）
+
+1. **Growth / 製造動能**
+2. **Inflation / 商品與預期**
+3. **Liquidity / 金融條件**
+4. **Trade / 運輸**
+5. **Asia / 台韓出口線索**
+6. **FX / 美元**
+
+每栏 **最多 3 句话 + 1 表格**。
+
+---
+
+## 2. 指標池 — 免費映射
+
+### 2.1 製造 / 生長
+
+| 名稱 | FRED / Yahoo | 備註 |
+|------|--------------|------|
+| 工業生產-製造 | `IPMAN` | ISM PMI 在 FRED 常不可獲 — 用此 proxy |
+| 耐久財訂單 | `DGORDER` | noisy — 看 3M 平滑 |
+| 美國就業 | `PAYEMS` 月變化 | regime 專案已用 |
+
+### 2.2 通膨 / 商品
+
+| 名稱 | ID |
+|------|-----|
+| WTI | `DCOILWTICO` / `CL=F` |
+| 銅 | `PCOPPUSDM` / `HG=F` |
+| 10Y Breakeven | `T10YIE` |
+
+### 2.3 金融條件
+
+| 名稱 | ID |
+|------|-----|
+| Fed funds | `DFF` |
+| 10Y-2Y 曲線 | `T10Y2Y` |
+| 廣義美元 | `DTWEXBGS` |
+| HY OAS | `BAMLH0A0HYM2` |
+
+### 2.4 貿易 / 運輸
+
+| 名稱 | 來源 |
+|------|------|
+| 乾散貨 proxy | yfinance `BDRY` |
+| SCFI | 需爬上海航交所 — 無則标缺口 |
+
+### 2.5 亞洲
+
+| 名稱 | 來源 |
+|------|------|
+| 台灣外銷訂單 | 經濟部統計處開放資料（接線後） |
+| 韓國出口 | 官網（接線後） |
+
+---
+
+## 3. 週報輸出模板（贴给用户）
+
+```markdown
+# Macro Pulse — Week of …
+
+## 1. 製造動能
+- IPMAN Δ 與耐久財：…
+## 2. 商品與通膨預期
+- 油/銅：… Breakeven：…
+## 3. 金融條件
+- DFF, 曲線, HY OAS：…
+## 4. 運輸
+- BDRY：…
+## 5. 亞洲出口線索
+- 台/韓：{数据或「本周缺口」}
+## 6. 匯率
+- DXY broad vs 亞幣敘述：…
+
+## 一週綜合風險標記
+- **Risk-on / Neutral / Risk-off**（附 1 句理由）
+```
+
+---
+
+## 4. 與「eco temperature」Regime 看板的邊界
+
+- **Regime dashboard**：內建週頻 score + 回測，代碼位于 `dashboard/`，未經明確授權不要改。
+- **Macro Pulse SOP**：给**文字週報**與 Cursor 內快速對齊認知；可以引用 dashboard 產生的 `output/web` JSON，但要寫路徑與日期。
+
+---
+
+## 5. 防錯清單
+
+1. **單一 surprise CPI** 不改寫整套 growth narative — 等 **兩個**確認指標。
+2. **匯率與股市同向波動** 時，先問「美元 flow 還是本地盈餘驚喜」。
+3. **BDRY** 不是 BDI 本尊 — 写「proxy」。
+
+---
+
+## 6. 若使用者有 Finnhub
+
+可補：macro calendar headline；仍以 FRED 數字为准。
+
+---
+
+## 7. 例行時間盒（建议）
+
+- **週一 30min**：跑 FRED 更新 + `shortage-radar` JSON。
+- **週中 15min**：只盯 **油 + 铜 + BDRY + IPMAN** 四項异动。
+
+---
+
+*固定格式週報的价值在於「可回溯」— 六個月後你才知道當時是不是盤勢給的假信号。*
