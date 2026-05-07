@@ -180,11 +180,12 @@ SUPPLY_CHAIN_GROUPS: Dict[str, Dict] = {
         ],
     },
     "G_power_infra": {
-        "label": "美國電力基礎設施",
+        "label": "美國 AI 電力基礎設施",
         "members": [
-            ("XLU", "公用事業 ETF"),
-            ("ICLN", "清潔能源 ETF"),
-            ("NEE", "NextEra Energy"),
+            ("CEG", "Constellation Energy"),
+            ("VST", "Vistra Corp"),
+            ("GEV", "GE Vernova"),
+            ("GRID", "Smart Grid Infra ETF"),
         ],
     },
 }
@@ -209,7 +210,7 @@ AI_AMPLIFIER_CHAIN = [
     {"id": "hbm",          "label": "HBM 記憶體",              "tickers": ["2408.TW"]},
     {"id": "server",       "label": "伺服器組裝",              "tickers": ["2382.TW", "6669.TW"]},
     {"id": "thermal",      "label": "散熱 & 電源",             "tickers": ["3017.TW", "2308.TW"]},
-    {"id": "datacenter",   "label": "資料中心 & 電力",         "tickers": ["XLU", "NEE"]},
+    {"id": "datacenter",   "label": "資料中心 & 電力",         "tickers": ["CEG", "GEV"]},
 ]
 
 # Supply chain data start date

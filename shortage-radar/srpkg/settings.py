@@ -327,6 +327,59 @@ def default_instruments() -> List[Instrument]:
             fred_frequency="monthly",
             notes="IMT 貨品出口；免費 FRED。不需韓國 data.go.kr key。",
         ),
+        # ── AI 電力 (北美) ─────────────────────────────────────────────────────
+        Instrument(
+            id="power_ceg",
+            category="power",
+            display_zh="Constellation Energy (CEG)",
+            display_en="Constellation Energy",
+            source="yahoo",
+            primary="CEG",
+            fred_frequency="daily",
+            notes="美最大核電業者，MSFT 三哩島重啟 20 年 PPA；AI 24/7 baseload 直接受惠。",
+            weight_price=0.55,
+            weight_spread=0.25,
+            weight_curve=0.20,
+        ),
+        Instrument(
+            id="power_vst",
+            category="power",
+            display_zh="Vistra Corp (VST)",
+            display_en="Vistra Corp",
+            source="yahoo",
+            primary="VST",
+            fred_frequency="daily",
+            notes="核電 + 氣電混合 IPP；多家 hyperscaler 資料中心長約；AI 電力需求受惠。",
+            weight_price=0.55,
+            weight_spread=0.25,
+            weight_curve=0.20,
+        ),
+        Instrument(
+            id="power_gev",
+            category="power",
+            display_zh="GE Vernova (GEV)",
+            display_en="GE Vernova",
+            source="yahoo",
+            primary="GEV",
+            fred_frequency="daily",
+            notes="氣渦輪製造龍頭，訂單能見度至 2028+；AI 數據中心新增容量的 capex 端代表。",
+            weight_price=0.55,
+            weight_spread=0.25,
+            weight_curve=0.20,
+        ),
+        Instrument(
+            id="power_grid",
+            category="power",
+            display_zh="Smart Grid Infra ETF (GRID)",
+            display_en="First Trust NASDAQ Smart Grid Infra ETF",
+            source="yahoo",
+            primary="GRID",
+            fred_frequency="daily",
+            notes="變壓器、開關、輸配電升級一籃子 ETF；北美電網 capex 需求的廣基代理。",
+            weight_price=0.55,
+            weight_spread=0.25,
+            weight_curve=0.20,
+        ),
     ]
 
 
@@ -340,6 +393,7 @@ def instruments_by_category() -> Dict[str, List[Instrument]]:
 def category_order() -> List[str]:
     return [
         "energy",
+        "power",
         "semiconductor",
         "metals",
         "battery",
@@ -351,6 +405,7 @@ def category_order() -> List[str]:
 def category_label_zh(cat: str) -> str:
     return {
         "energy": "能源",
+        "power": "AI 電力 (北美)",
         "semiconductor": "半導體",
         "metals": "工業金屬",
         "battery": "電池/轉型金屬",

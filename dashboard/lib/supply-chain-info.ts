@@ -104,19 +104,19 @@ export const BASKET_INFO: Record<string, BasketInfo> = {
     source: "TWSE / Bloomberg，季度等權調整，資料起始：2016-01-08",
   },
   G_power_infra: {
-    label: "美國電力基礎設施",
+    label: "美國 AI 電力基礎設施",
     type: "basket",
     method: "等權重（每月第一個交易日重新調整）",
     description:
-      "追蹤美國電力公用事業及資料中心電力基礎設施，受惠 AI 算力爆發帶動用電需求高速成長。篩選條件：已簽署資料中心電力購售合約（PPA）者或電力基礎設施 ETF。",
+      "追蹤北美 AI 電力供需鏈四個純度最高的標的：兩家 IPP（核電/氣電直接與 hyperscaler 簽長約）、一家氣渦輪設備龍頭（capex 端）、一支電網升級 ETF（輸配電 capex 籃子）。篩選依據：已簽署資料中心 PPA 或 AI 數據中心新增容量直接受益。",
     formula: "週報酬 = (1/N) × Σ weekly_ret_i",
     stocks: [
-      { ticker: "NEE", name: "NextEra Energy", weight: "25%", note: "全球最大可再生能源業者，已簽多個 Hyperscaler PPA" },
-      { ticker: "VST", name: "Vistra Corp", weight: "25%", note: "核電 + 氣電，資料中心合約快速增長" },
-      { ticker: "CEG", name: "Constellation Energy", weight: "25%", note: "核電廠重啟，Microsoft 20yr PPA 標誌性合約" },
-      { ticker: "XLU", name: "Utilities Select SPDR (ETF)", weight: "25%", note: "電力公用事業廣基 ETF，用作整體類股基準" },
+      { ticker: "CEG", name: "Constellation Energy", weight: "25%", note: "美最大核電業者，MSFT 三哩島重啟 20 年 PPA；AI 24/7 baseload 直接受惠" },
+      { ticker: "VST", name: "Vistra Corp", weight: "25%", note: "核電 + 氣電混合 IPP；多家 hyperscaler 資料中心長約，AI 電力需求直接受益" },
+      { ticker: "GEV", name: "GE Vernova", weight: "25%", note: "氣渦輪製造龍頭，訂單能見度至 2028+；AI 數據中心新增容量的 capex 端代表" },
+      { ticker: "GRID", name: "First Trust NASDAQ Smart Grid Infra ETF", weight: "25%", note: "變壓器、開關、輸配電升級一籃子 ETF；北美電網 capex 需求廣基代理" },
     ],
-    source: "Bloomberg / Yahoo Finance，月度等權調整，資料起始：2016-01-08",
+    source: "Yahoo Finance，月度等權調整，資料起始：2016-01-08",
   },
 };
 
