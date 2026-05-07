@@ -100,12 +100,12 @@ code {{ background: #1e293b; padding: 2px 6px; border-radius: 4px; }}
 <p class="meta">產生時間：{html.escape(str(payload.get('generated_at','')))}　｜　分數僅為價格/動能 proxy，非真實庫存模型；placeholder 列待接 API。</p>
 <p class="meta trail-note">{html.escape(str(payload.get('trail_legend', '')))}</p>
 <table>
-<thead><tr><th>分類</th><th>項目</th><th>緊繃分數</th><th>本期</th><th>約1季前</th><th>約2季前</th><th>來源</th><th>備註</th></tr></thead>
+<thead><tr><th>分類</th><th>項目</th><th>供需緊張度</th><th>本期</th><th>約1季前</th><th>約2季前</th><th>來源</th><th>備註</th></tr></thead>
 <tbody>
 {''.join(rows_html)}
 </tbody>
 </table>
-<p class="legend">分數約 50 為中性；&gt;60 偏緊／價格動能偏強；&lt;40 偏鬆（或需求轉弱）。請搭配 <code>.cursor/rules/</code> 內 SOP 交叉驗證。</p>
+<p class="legend">供需緊張度約 50 為中性；&gt;60 供給偏緊／價格動能偏強；&lt;40 供給偏鬆（或需求轉弱）。請搭配 <code>.cursor/rules/</code> 內 SOP 交叉驗證。</p>
 <script type="application/json" id="payload">{meta}</script>
 </body>
 </html>"""

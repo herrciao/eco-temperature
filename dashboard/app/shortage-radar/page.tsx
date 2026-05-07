@@ -111,7 +111,7 @@ function CategoryBlock({ category, signals }: { category: string; signals: Short
       <div className={`flex items-center gap-3 px-3 py-2 rounded-t-xl border ${scoreBg(avgScore)}`}>
         <h2 className="text-sm font-semibold text-slate-200">{label}</h2>
         <span className={`text-xs font-bold ${scoreColor(avgScore)}`}>
-          均分 {isNaN(avgScore) ? "—" : avgScore.toFixed(1)}
+          緊張度均值 {isNaN(avgScore) ? "—" : avgScore.toFixed(1)}
         </span>
       </div>
       <div className="rounded-b-xl border border-t-0 border-slate-700/50 overflow-hidden">
@@ -120,7 +120,7 @@ function CategoryBlock({ category, signals }: { category: string; signals: Short
             <tr className="border-b border-slate-800 text-xs text-slate-500">
               <th className="py-2 px-3 text-left font-normal">分類</th>
               <th className="py-2 px-3 text-left font-normal">項目</th>
-              <th className="py-2 px-3 text-left font-normal">緊繃分</th>
+              <th className="py-2 px-3 text-left font-normal">供需緊張度</th>
               <th className="py-2 px-3 text-right font-normal">本期</th>
               <th className="py-2 px-3 text-right font-normal">~1季前</th>
               <th className="py-2 px-3 text-right font-normal">~2季前</th>
@@ -209,7 +209,7 @@ PYTHONPATH=. python -m pipeline.main`}</pre>
         {/* Quick highlights */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
-            <div className="text-xs font-semibold text-red-400 mb-3 uppercase tracking-wider">最緊繃 Top 3</div>
+            <div className="text-xs font-semibold text-red-400 mb-3 uppercase tracking-wider">供需最緊張 Top 3</div>
             <div className="space-y-2">
               {topTight.map((s) => (
                 <div key={s.id} className="flex items-center justify-between">
@@ -220,7 +220,7 @@ PYTHONPATH=. python -m pipeline.main`}</pre>
             </div>
           </div>
           <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-4">
-            <div className="text-xs font-semibold text-green-400 mb-3 uppercase tracking-wider">最寬鬆 Top 3</div>
+            <div className="text-xs font-semibold text-green-400 mb-3 uppercase tracking-wider">供需最寬鬆 Top 3</div>
             <div className="space-y-2">
               {topLoose.map((s) => (
                 <div key={s.id} className="flex items-center justify-between">
@@ -235,10 +235,10 @@ PYTHONPATH=. python -m pipeline.main`}</pre>
         {/* Score legend */}
         <div className="flex flex-wrap gap-3 text-xs">
           {[
-            { label: "≥70 高度緊繃", color: "text-red-400" },
-            { label: "58–70 偏緊", color: "text-orange-400" },
-            { label: "45–58 中性偏緊", color: "text-yellow-400" },
-            { label: "35–45 偏鬆", color: "text-green-400" },
+            { label: "≥70 高度緊張", color: "text-red-400" },
+            { label: "58–70 偏緊張", color: "text-orange-400" },
+            { label: "45–58 中性", color: "text-yellow-400" },
+            { label: "35–45 偏寬鬆", color: "text-green-400" },
             { label: "<35 寬鬆", color: "text-green-600" },
           ].map((item) => (
             <span key={item.label} className={`${item.color} font-medium`}>
@@ -261,7 +261,7 @@ PYTHONPATH=. python -m pipeline.main`}</pre>
 
         {/* Footer */}
         <footer className="border-t border-slate-800/60 pt-6 text-xs text-slate-600">
-          <p>分數約 50 為中性；&gt;60 偏緊；&lt;40 偏鬆。請搭配 <code className="bg-slate-800/60 px-1 rounded">.cursor/rules/</code> 內 SOP 交叉驗證。僅供研究，不構成投資建議。</p>
+          <p>供需緊張度約 50 為中性；&gt;60 供給偏緊；&lt;40 供給偏鬆。請搭配 <code className="bg-slate-800/60 px-1 rounded">.cursor/rules/</code> 內 SOP 交叉驗證。僅供研究，不構成投資建議。</p>
         </footer>
 
       </div>
