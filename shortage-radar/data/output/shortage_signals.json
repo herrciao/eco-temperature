@@ -1,7 +1,7 @@
 {
   "product": "shortage-radar",
   "version": 2,
-  "generated_at": "2026-05-12T07:11:38Z",
+  "generated_at": "2026-05-12T07:20:46Z",
   "trail_legend": "月頻：本期與往回第3、6筆月資料（約各差一季）。週頻(EIA)：往回第0、13、26筆週資料。日頻：最近交易日與約91天、182天前的最近觀測；若來源僅提供短期滑動表（無法滿足182天），「約2季前」改為可取得之最舊觀測（畫面上標*）。",
   "categories": [
     "energy",
@@ -84,61 +84,15 @@
       "display_zh": "美國原油庫存（EIA 週）",
       "display_en": "US crude oil ending stocks (EIA weekly, total)",
       "source": "eia_v2",
-      "score": 44.9,
-      "latest": 849882.0,
-      "latest_date": "2026-05-12",
-      "quarter_trail": [
-        {
-          "label": "本期",
-          "date": "2026-05-12",
-          "value": 849882.0,
-          "value_fmt": 849882.0
-        },
-        {
-          "label": "約1季前",
-          "date": "2026-04-23",
-          "value": 870774.0,
-          "value_fmt": 870774.0
-        },
-        {
-          "label": "約2季前",
-          "date": "2026-04-06",
-          "value": 878042.0,
-          "value_fmt": 878042.0
-        }
-      ],
-      "trail_mode": "weekly",
+      "score": null,
+      "latest": null,
+      "latest_date": null,
+      "quarter_trail": null,
+      "trail_mode": null,
       "notes": "EIA API v2：`WCRSTUS1`（美國原油總庫存，千桶）；需免費 EIA_API_KEY。庫存下降 → 市場偏緊。",
       "detail": {
-        "score": 44.9,
-        "z_long": 0.724,
-        "z_short": 0.706,
-        "mom_30d_approx": -2.65,
-        "latest": 849882.0,
-        "latest_date": "2026-05-12",
-        "data_completeness": 100.0,
-        "orientation": "low_is_tight",
-        "trail_mode": "weekly",
-        "quarter_trail": [
-          {
-            "label": "本期",
-            "date": "2026-05-12",
-            "value": 849882.0,
-            "value_fmt": 849882.0
-          },
-          {
-            "label": "約1季前",
-            "date": "2026-04-23",
-            "value": 870774.0,
-            "value_fmt": 870774.0
-          },
-          {
-            "label": "約2季前",
-            "date": "2026-04-06",
-            "value": 878042.0,
-            "value_fmt": 878042.0
-          }
-        ]
+        "reason": "fetch_failed_or_empty",
+        "hint": "若為 EIA：請在 repo 根 .env 設定 EIA_API_KEY（API v2，見 SETUP_KEYS.md）"
       }
     },
     {
@@ -212,15 +166,15 @@
       "display_zh": "美國天然氣期貨 (NG)",
       "display_en": "NYMEX natural gas front month",
       "source": "yahoo",
-      "score": 48.7,
-      "latest": 2.93,
+      "score": 48.6,
+      "latest": 2.924,
       "latest_date": "2026-05-12",
       "quarter_trail": [
         {
           "label": "本期",
           "date": "2026-05-12",
-          "value": 2.930000066757202,
-          "value_fmt": 2.93
+          "value": 2.9240000247955322,
+          "value_fmt": 2.924
         },
         {
           "label": "約1季前",
@@ -238,11 +192,11 @@
       "trail_mode": "daily",
       "notes": "Yahoo NG=F；對沖/投機較多，現貨用 Henry Hub 交叉驗證。",
       "detail": {
-        "score": 48.7,
-        "z_long": -0.698,
-        "z_short": -0.686,
-        "mom_30d_approx": 11.53,
-        "latest": 2.93,
+        "score": 48.6,
+        "z_long": -0.706,
+        "z_short": -0.694,
+        "mom_30d_approx": 11.31,
+        "latest": 2.924,
         "latest_date": "2026-05-12",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
@@ -251,8 +205,8 @@
           {
             "label": "本期",
             "date": "2026-05-12",
-            "value": 2.930000066757202,
-            "value_fmt": 2.93
+            "value": 2.9240000247955322,
+            "value_fmt": 2.924
           },
           {
             "label": "約1季前",
@@ -743,8 +697,8 @@
         {
           "label": "約2季前",
           "date": "2025-11-10",
-          "value": -3.1951556356346167,
-          "value_fmt": -3.195156
+          "value": -3.195154432292968,
+          "value_fmt": -3.195154
         }
       ],
       "trail_mode": "daily",
@@ -775,8 +729,8 @@
           {
             "label": "約2季前",
             "date": "2025-11-10",
-            "value": -3.1951556356346167,
-            "value_fmt": -3.195156
+            "value": -3.195154432292968,
+            "value_fmt": -3.195154
           }
         ]
       }
@@ -916,15 +870,15 @@
       "display_zh": "COMEX 銅期貨",
       "display_en": "HG=F copper futures",
       "source": "yahoo",
-      "score": 73.5,
-      "latest": 6.4475,
+      "score": 73.6,
+      "latest": 6.45,
       "latest_date": "2026-05-12",
       "quarter_trail": [
         {
           "label": "本期",
           "date": "2026-05-12",
-          "value": 6.447500228881836,
-          "value_fmt": 6.4475
+          "value": 6.449999809265137,
+          "value_fmt": 6.45
         },
         {
           "label": "約1季前",
@@ -942,11 +896,11 @@
       "trail_mode": "daily",
       "notes": "較 IMF 月頻更即時；可分鐘級情緒。",
       "detail": {
-        "score": 73.5,
-        "z_long": 2.178,
-        "z_short": 2.142,
-        "mom_30d_approx": 7.89,
-        "latest": 6.4475,
+        "score": 73.6,
+        "z_long": 2.182,
+        "z_short": 2.146,
+        "mom_30d_approx": 7.93,
+        "latest": 6.45,
         "latest_date": "2026-05-12",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
@@ -955,8 +909,8 @@
           {
             "label": "本期",
             "date": "2026-05-12",
-            "value": 6.447500228881836,
-            "value_fmt": 6.4475
+            "value": 6.449999809265137,
+            "value_fmt": 6.45
           },
           {
             "label": "約1季前",
@@ -1494,15 +1448,15 @@
       "display_zh": "玉米期貨",
       "display_en": "Corn futures",
       "source": "yahoo",
-      "score": 73.5,
-      "latest": 475.5,
+      "score": 73.6,
+      "latest": 475.75,
       "latest_date": "2026-05-12",
       "quarter_trail": [
         {
           "label": "本期",
           "date": "2026-05-12",
-          "value": 475.5,
-          "value_fmt": 475.5
+          "value": 475.75,
+          "value_fmt": 475.75
         },
         {
           "label": "約1季前",
@@ -1520,11 +1474,11 @@
       "trail_mode": "daily",
       "notes": "",
       "detail": {
-        "score": 73.5,
-        "z_long": 2.123,
-        "z_short": 2.18,
-        "mom_30d_approx": 8.01,
-        "latest": 475.5,
+        "score": 73.6,
+        "z_long": 2.134,
+        "z_short": 2.191,
+        "mom_30d_approx": 8.06,
+        "latest": 475.75,
         "latest_date": "2026-05-12",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
@@ -1533,8 +1487,8 @@
           {
             "label": "本期",
             "date": "2026-05-12",
-            "value": 475.5,
-            "value_fmt": 475.5
+            "value": 475.75,
+            "value_fmt": 475.75
           },
           {
             "label": "約1季前",
@@ -1686,15 +1640,15 @@
       "display_zh": "黃豆期貨",
       "display_en": "Soybean futures",
       "source": "yahoo",
-      "score": 72.1,
-      "latest": 1216.25,
+      "score": 72.0,
+      "latest": 1216.0,
       "latest_date": "2026-05-12",
       "quarter_trail": [
         {
           "label": "本期",
           "date": "2026-05-12",
-          "value": 1216.25,
-          "value_fmt": 1216.25
+          "value": 1216.0,
+          "value_fmt": 1216.0
         },
         {
           "label": "約1季前",
@@ -1712,11 +1666,11 @@
       "trail_mode": "daily",
       "notes": "",
       "detail": {
-        "score": 72.1,
-        "z_long": 2.181,
-        "z_short": 2.119,
-        "mom_30d_approx": 4.65,
-        "latest": 1216.25,
+        "score": 72.0,
+        "z_long": 2.177,
+        "z_short": 2.115,
+        "mom_30d_approx": 4.62,
+        "latest": 1216.0,
         "latest_date": "2026-05-12",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
@@ -1725,8 +1679,8 @@
           {
             "label": "本期",
             "date": "2026-05-12",
-            "value": 1216.25,
-            "value_fmt": 1216.25
+            "value": 1216.0,
+            "value_fmt": 1216.0
           },
           {
             "label": "約1季前",
