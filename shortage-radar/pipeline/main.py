@@ -8,7 +8,7 @@ Or:
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import click
 
 from srpkg.settings import OUTPUT_DIR, PACK_ROOT
@@ -40,6 +40,25 @@ def main(write_json: bool, write_html: bool) -> None:
     if write_json:
         json_path.write_text(json_content, encoding="utf-8")
         click.echo(f"Wrote {json_path}")
+
+        # 存一份帶日期的快照供 daily_brief 計算 5 日趨勢
+        today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        snapshots_dir = OUTPUT_DIR / "snapshots"
+        snapshots_dir.mkdir(exist_ok=True)
+        snap_path = snapshots_dir / f"shortage_signals.{today_str}.json"
+        snap_path.write_text(json_content, encoding="utf-8")
+        click.echo(f"Snapshot {snap_path.name}")
+        # 清理 35 天以前的快照
+        cutoff = datetime.now(timezone.utc) - timedelta(days=35)
+        for old_snap in snapshots_dir.glob("shortage_signals.*.json"):
+            try:
+                date_part = old_snap.stem.split(".")[-1]
+                snap_dt = datetime.strptime(date_part, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+                if snap_dt < cutoff:
+                    old_snap.unlink()
+            except ValueError:
+                pass
+
         # 同步寫入 dashboard/data/web/ 供 Next.js 使用（Vercel 部署所需）
         dashboard_web = PACK_ROOT.parent / "dashboard" / "data" / "web"
         if dashboard_web.exists():

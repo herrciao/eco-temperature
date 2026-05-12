@@ -70,6 +70,7 @@ jobs:
           git add shortage-radar/data/output/shortage_signals.prev.json
           git add shortage-radar/data/output/shortage_report.html
           git add shortage-radar/data/output/daily_brief.md
+          git add "shortage-radar/data/output/snapshots/"
           git add dashboard/data/web/shortage_signals.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
