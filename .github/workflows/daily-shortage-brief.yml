@@ -76,5 +76,6 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "chore: daily shortage-radar refresh $(date -u +%Y-%m-%d)"
+            git pull --rebase
             git push
           fi
