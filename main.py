@@ -32,7 +32,7 @@ from config import (
 )
 from data.align import build_weekly_panel
 from data.sources import fetch_all_raw
-from data.store import connect
+from data.store import connect, load_series as _db_load_series
 from features.build import build_feature_matrix
 from scores.composite import compute_composite_scores
 from scores.regime import add_regime
@@ -167,6 +167,35 @@ def run_export() -> None:
         encoding="utf-8",
     )
 
+    # ── Employment monthly panel (FRED raw, month-frequency) ──────────────────
+    _conn_emp = connect(DB_PATH)
+    _payems = _db_load_series(_conn_emp, "payems")
+    _unrate = _db_load_series(_conn_emp, "unrate")
+    _conn_emp.close()
+
+    # Normalise both to month-start so they join cleanly
+    _payems.index = _payems.index.to_period("M").to_timestamp()
+    _unrate.index = _unrate.index.to_period("M").to_timestamp()
+    _nfp_change = _payems.diff()
+
+    _emp_df = pd.DataFrame(
+        {"payems": _payems, "nfp_change": _nfp_change, "unrate": _unrate}
+    ).sort_index()
+
+    employment: list[dict[str, object]] = [
+        {
+            "month": dt.strftime("%Y-%m-%d"),
+            "payems": _json_scalar(row["payems"]),
+            "nfp_change": _json_scalar(row["nfp_change"]),
+            "unrate": _json_scalar(row["unrate"]),
+        }
+        for dt, row in _emp_df.iterrows()
+    ]
+    (WEB_DIR / "employment_monthly.json").write_text(
+        json.dumps(employment, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
 
 def run_report(df: pd.DataFrame, reg_sum: pd.DataFrame, spy_stats: dict | None = None) -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -226,7 +255,7 @@ def export() -> None:
     run_export()
     click.echo(
         f"Wrote {WEB_DIR / 'current.json'}, {WEB_DIR / 'panel.json'}, "
-        f"and {WEB_DIR / 'factor_weights.json'}"
+        f"{WEB_DIR / 'factor_weights.json'}, and {WEB_DIR / 'employment_monthly.json'}"
     )
 
 

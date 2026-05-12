@@ -1,0 +1,812 @@
+[
+  {
+    "month": "2015-01-01",
+    "payems": 140568.0,
+    "nfp_change": null,
+    "unrate": 5.7
+  },
+  {
+    "month": "2015-02-01",
+    "payems": 140827.0,
+    "nfp_change": 259.0,
+    "unrate": 5.5
+  },
+  {
+    "month": "2015-03-01",
+    "payems": 140923.0,
+    "nfp_change": 96.0,
+    "unrate": 5.4
+  },
+  {
+    "month": "2015-04-01",
+    "payems": 141196.0,
+    "nfp_change": 273.0,
+    "unrate": 5.4
+  },
+  {
+    "month": "2015-05-01",
+    "payems": 141538.0,
+    "nfp_change": 342.0,
+    "unrate": 5.6
+  },
+  {
+    "month": "2015-06-01",
+    "payems": 141709.0,
+    "nfp_change": 171.0,
+    "unrate": 5.3
+  },
+  {
+    "month": "2015-07-01",
+    "payems": 141991.0,
+    "nfp_change": 282.0,
+    "unrate": 5.2
+  },
+  {
+    "month": "2015-08-01",
+    "payems": 142125.0,
+    "nfp_change": 134.0,
+    "unrate": 5.1
+  },
+  {
+    "month": "2015-09-01",
+    "payems": 142275.0,
+    "nfp_change": 150.0,
+    "unrate": 5.0
+  },
+  {
+    "month": "2015-10-01",
+    "payems": 142579.0,
+    "nfp_change": 304.0,
+    "unrate": 5.0
+  },
+  {
+    "month": "2015-11-01",
+    "payems": 142808.0,
+    "nfp_change": 229.0,
+    "unrate": 5.1
+  },
+  {
+    "month": "2015-12-01",
+    "payems": 143077.0,
+    "nfp_change": 269.0,
+    "unrate": 5.0
+  },
+  {
+    "month": "2016-01-01",
+    "payems": 143210.0,
+    "nfp_change": 133.0,
+    "unrate": 4.8
+  },
+  {
+    "month": "2016-02-01",
+    "payems": 143406.0,
+    "nfp_change": 196.0,
+    "unrate": 4.9
+  },
+  {
+    "month": "2016-03-01",
+    "payems": 143662.0,
+    "nfp_change": 256.0,
+    "unrate": 5.0
+  },
+  {
+    "month": "2016-04-01",
+    "payems": 143854.0,
+    "nfp_change": 192.0,
+    "unrate": 5.1
+  },
+  {
+    "month": "2016-05-01",
+    "payems": 143900.0,
+    "nfp_change": 46.0,
+    "unrate": 4.8
+  },
+  {
+    "month": "2016-06-01",
+    "payems": 144147.0,
+    "nfp_change": 247.0,
+    "unrate": 4.9
+  },
+  {
+    "month": "2016-07-01",
+    "payems": 144520.0,
+    "nfp_change": 373.0,
+    "unrate": 4.8
+  },
+  {
+    "month": "2016-08-01",
+    "payems": 144661.0,
+    "nfp_change": 141.0,
+    "unrate": 4.9
+  },
+  {
+    "month": "2016-09-01",
+    "payems": 144967.0,
+    "nfp_change": 306.0,
+    "unrate": 5.0
+  },
+  {
+    "month": "2016-10-01",
+    "payems": 145065.0,
+    "nfp_change": 98.0,
+    "unrate": 4.9
+  },
+  {
+    "month": "2016-11-01",
+    "payems": 145183.0,
+    "nfp_change": 118.0,
+    "unrate": 4.7
+  },
+  {
+    "month": "2016-12-01",
+    "payems": 145408.0,
+    "nfp_change": 225.0,
+    "unrate": 4.7
+  },
+  {
+    "month": "2017-01-01",
+    "payems": 145628.0,
+    "nfp_change": 220.0,
+    "unrate": 4.7
+  },
+  {
+    "month": "2017-02-01",
+    "payems": 145846.0,
+    "nfp_change": 218.0,
+    "unrate": 4.6
+  },
+  {
+    "month": "2017-03-01",
+    "payems": 145970.0,
+    "nfp_change": 124.0,
+    "unrate": 4.4
+  },
+  {
+    "month": "2017-04-01",
+    "payems": 146175.0,
+    "nfp_change": 205.0,
+    "unrate": 4.4
+  },
+  {
+    "month": "2017-05-01",
+    "payems": 146380.0,
+    "nfp_change": 205.0,
+    "unrate": 4.4
+  },
+  {
+    "month": "2017-06-01",
+    "payems": 146583.0,
+    "nfp_change": 203.0,
+    "unrate": 4.3
+  },
+  {
+    "month": "2017-07-01",
+    "payems": 146772.0,
+    "nfp_change": 189.0,
+    "unrate": 4.3
+  },
+  {
+    "month": "2017-08-01",
+    "payems": 146919.0,
+    "nfp_change": 147.0,
+    "unrate": 4.4
+  },
+  {
+    "month": "2017-09-01",
+    "payems": 147008.0,
+    "nfp_change": 89.0,
+    "unrate": 4.3
+  },
+  {
+    "month": "2017-10-01",
+    "payems": 147149.0,
+    "nfp_change": 141.0,
+    "unrate": 4.2
+  },
+  {
+    "month": "2017-11-01",
+    "payems": 147372.0,
+    "nfp_change": 223.0,
+    "unrate": 4.2
+  },
+  {
+    "month": "2017-12-01",
+    "payems": 147523.0,
+    "nfp_change": 151.0,
+    "unrate": 4.1
+  },
+  {
+    "month": "2018-01-01",
+    "payems": 147660.0,
+    "nfp_change": 137.0,
+    "unrate": 4.0
+  },
+  {
+    "month": "2018-02-01",
+    "payems": 148054.0,
+    "nfp_change": 394.0,
+    "unrate": 4.1
+  },
+  {
+    "month": "2018-03-01",
+    "payems": 148280.0,
+    "nfp_change": 226.0,
+    "unrate": 4.0
+  },
+  {
+    "month": "2018-04-01",
+    "payems": 148420.0,
+    "nfp_change": 140.0,
+    "unrate": 4.0
+  },
+  {
+    "month": "2018-05-01",
+    "payems": 148742.0,
+    "nfp_change": 322.0,
+    "unrate": 3.8
+  },
+  {
+    "month": "2018-06-01",
+    "payems": 148960.0,
+    "nfp_change": 218.0,
+    "unrate": 4.0
+  },
+  {
+    "month": "2018-07-01",
+    "payems": 149020.0,
+    "nfp_change": 60.0,
+    "unrate": 3.8
+  },
+  {
+    "month": "2018-08-01",
+    "payems": 149277.0,
+    "nfp_change": 257.0,
+    "unrate": 3.8
+  },
+  {
+    "month": "2018-09-01",
+    "payems": 149358.0,
+    "nfp_change": 81.0,
+    "unrate": 3.7
+  },
+  {
+    "month": "2018-10-01",
+    "payems": 149527.0,
+    "nfp_change": 169.0,
+    "unrate": 3.8
+  },
+  {
+    "month": "2018-11-01",
+    "payems": 149617.0,
+    "nfp_change": 90.0,
+    "unrate": 3.8
+  },
+  {
+    "month": "2018-12-01",
+    "payems": 149809.0,
+    "nfp_change": 192.0,
+    "unrate": 3.9
+  },
+  {
+    "month": "2019-01-01",
+    "payems": 150060.0,
+    "nfp_change": 251.0,
+    "unrate": 4.0
+  },
+  {
+    "month": "2019-02-01",
+    "payems": 150067.0,
+    "nfp_change": 7.0,
+    "unrate": 3.8
+  },
+  {
+    "month": "2019-03-01",
+    "payems": 150295.0,
+    "nfp_change": 228.0,
+    "unrate": 3.8
+  },
+  {
+    "month": "2019-04-01",
+    "payems": 150591.0,
+    "nfp_change": 296.0,
+    "unrate": 3.7
+  },
+  {
+    "month": "2019-05-01",
+    "payems": 150618.0,
+    "nfp_change": 27.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2019-06-01",
+    "payems": 150838.0,
+    "nfp_change": 220.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2019-07-01",
+    "payems": 150937.0,
+    "nfp_change": 99.0,
+    "unrate": 3.7
+  },
+  {
+    "month": "2019-08-01",
+    "payems": 151169.0,
+    "nfp_change": 232.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2019-09-01",
+    "payems": 151365.0,
+    "nfp_change": 196.0,
+    "unrate": 3.5
+  },
+  {
+    "month": "2019-10-01",
+    "payems": 151460.0,
+    "nfp_change": 95.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2019-11-01",
+    "payems": 151667.0,
+    "nfp_change": 207.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2019-12-01",
+    "payems": 151794.0,
+    "nfp_change": 127.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2020-01-01",
+    "payems": 152031.0,
+    "nfp_change": 237.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2020-02-01",
+    "payems": 152293.0,
+    "nfp_change": 262.0,
+    "unrate": 3.5
+  },
+  {
+    "month": "2020-03-01",
+    "payems": 150895.0,
+    "nfp_change": -1398.0,
+    "unrate": 4.4
+  },
+  {
+    "month": "2020-04-01",
+    "payems": 130426.0,
+    "nfp_change": -20469.0,
+    "unrate": 14.8
+  },
+  {
+    "month": "2020-05-01",
+    "payems": 133040.0,
+    "nfp_change": 2614.0,
+    "unrate": 13.2
+  },
+  {
+    "month": "2020-06-01",
+    "payems": 137671.0,
+    "nfp_change": 4631.0,
+    "unrate": 11.0
+  },
+  {
+    "month": "2020-07-01",
+    "payems": 139255.0,
+    "nfp_change": 1584.0,
+    "unrate": 10.2
+  },
+  {
+    "month": "2020-08-01",
+    "payems": 140821.0,
+    "nfp_change": 1566.0,
+    "unrate": 8.4
+  },
+  {
+    "month": "2020-09-01",
+    "payems": 141770.0,
+    "nfp_change": 949.0,
+    "unrate": 7.8
+  },
+  {
+    "month": "2020-10-01",
+    "payems": 142460.0,
+    "nfp_change": 690.0,
+    "unrate": 6.9
+  },
+  {
+    "month": "2020-11-01",
+    "payems": 142733.0,
+    "nfp_change": 273.0,
+    "unrate": 6.7
+  },
+  {
+    "month": "2020-12-01",
+    "payems": 142548.0,
+    "nfp_change": -185.0,
+    "unrate": 6.7
+  },
+  {
+    "month": "2021-01-01",
+    "payems": 142863.0,
+    "nfp_change": 315.0,
+    "unrate": 6.4
+  },
+  {
+    "month": "2021-02-01",
+    "payems": 143380.0,
+    "nfp_change": 517.0,
+    "unrate": 6.2
+  },
+  {
+    "month": "2021-03-01",
+    "payems": 144232.0,
+    "nfp_change": 852.0,
+    "unrate": 6.1
+  },
+  {
+    "month": "2021-04-01",
+    "payems": 144587.0,
+    "nfp_change": 355.0,
+    "unrate": 6.1
+  },
+  {
+    "month": "2021-05-01",
+    "payems": 145065.0,
+    "nfp_change": 478.0,
+    "unrate": 5.8
+  },
+  {
+    "month": "2021-06-01",
+    "payems": 145820.0,
+    "nfp_change": 755.0,
+    "unrate": 5.9
+  },
+  {
+    "month": "2021-07-01",
+    "payems": 146762.0,
+    "nfp_change": 942.0,
+    "unrate": 5.4
+  },
+  {
+    "month": "2021-08-01",
+    "payems": 147314.0,
+    "nfp_change": 552.0,
+    "unrate": 5.1
+  },
+  {
+    "month": "2021-09-01",
+    "payems": 147771.0,
+    "nfp_change": 457.0,
+    "unrate": 4.7
+  },
+  {
+    "month": "2021-10-01",
+    "payems": 148572.0,
+    "nfp_change": 801.0,
+    "unrate": 4.5
+  },
+  {
+    "month": "2021-11-01",
+    "payems": 149230.0,
+    "nfp_change": 658.0,
+    "unrate": 4.1
+  },
+  {
+    "month": "2021-12-01",
+    "payems": 149816.0,
+    "nfp_change": 586.0,
+    "unrate": 3.9
+  },
+  {
+    "month": "2022-01-01",
+    "payems": 150006.0,
+    "nfp_change": 190.0,
+    "unrate": 4.0
+  },
+  {
+    "month": "2022-02-01",
+    "payems": 150825.0,
+    "nfp_change": 819.0,
+    "unrate": 3.9
+  },
+  {
+    "month": "2022-03-01",
+    "payems": 151315.0,
+    "nfp_change": 490.0,
+    "unrate": 3.7
+  },
+  {
+    "month": "2022-04-01",
+    "payems": 151623.0,
+    "nfp_change": 308.0,
+    "unrate": 3.7
+  },
+  {
+    "month": "2022-05-01",
+    "payems": 151924.0,
+    "nfp_change": 301.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2022-06-01",
+    "payems": 152358.0,
+    "nfp_change": 434.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2022-07-01",
+    "payems": 153072.0,
+    "nfp_change": 714.0,
+    "unrate": 3.5
+  },
+  {
+    "month": "2022-08-01",
+    "payems": 153362.0,
+    "nfp_change": 290.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2022-09-01",
+    "payems": 153582.0,
+    "nfp_change": 220.0,
+    "unrate": 3.5
+  },
+  {
+    "month": "2022-10-01",
+    "payems": 153939.0,
+    "nfp_change": 357.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2022-11-01",
+    "payems": 154242.0,
+    "nfp_change": 303.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2022-12-01",
+    "payems": 154342.0,
+    "nfp_change": 100.0,
+    "unrate": 3.5
+  },
+  {
+    "month": "2023-01-01",
+    "payems": 154776.0,
+    "nfp_change": 434.0,
+    "unrate": 3.5
+  },
+  {
+    "month": "2023-02-01",
+    "payems": 155066.0,
+    "nfp_change": 290.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2023-03-01",
+    "payems": 155134.0,
+    "nfp_change": 68.0,
+    "unrate": 3.5
+  },
+  {
+    "month": "2023-04-01",
+    "payems": 155375.0,
+    "nfp_change": 241.0,
+    "unrate": 3.4
+  },
+  {
+    "month": "2023-05-01",
+    "payems": 155655.0,
+    "nfp_change": 280.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2023-06-01",
+    "payems": 155880.0,
+    "nfp_change": 225.0,
+    "unrate": 3.6
+  },
+  {
+    "month": "2023-07-01",
+    "payems": 156043.0,
+    "nfp_change": 163.0,
+    "unrate": 3.5
+  },
+  {
+    "month": "2023-08-01",
+    "payems": 156261.0,
+    "nfp_change": 218.0,
+    "unrate": 3.7
+  },
+  {
+    "month": "2023-09-01",
+    "payems": 156417.0,
+    "nfp_change": 156.0,
+    "unrate": 3.7
+  },
+  {
+    "month": "2023-10-01",
+    "payems": 156576.0,
+    "nfp_change": 159.0,
+    "unrate": 3.9
+  },
+  {
+    "month": "2023-11-01",
+    "payems": 156703.0,
+    "nfp_change": 127.0,
+    "unrate": 3.7
+  },
+  {
+    "month": "2023-12-01",
+    "payems": 156857.0,
+    "nfp_change": 154.0,
+    "unrate": 3.8
+  },
+  {
+    "month": "2024-01-01",
+    "payems": 157032.0,
+    "nfp_change": 175.0,
+    "unrate": 3.7
+  },
+  {
+    "month": "2024-02-01",
+    "payems": 157238.0,
+    "nfp_change": 206.0,
+    "unrate": 3.9
+  },
+  {
+    "month": "2024-03-01",
+    "payems": 157466.0,
+    "nfp_change": 228.0,
+    "unrate": 3.9
+  },
+  {
+    "month": "2024-04-01",
+    "payems": 157530.0,
+    "nfp_change": 64.0,
+    "unrate": 3.9
+  },
+  {
+    "month": "2024-05-01",
+    "payems": 157608.0,
+    "nfp_change": 78.0,
+    "unrate": 3.9
+  },
+  {
+    "month": "2024-06-01",
+    "payems": 157695.0,
+    "nfp_change": 87.0,
+    "unrate": 4.1
+  },
+  {
+    "month": "2024-07-01",
+    "payems": 157748.0,
+    "nfp_change": 53.0,
+    "unrate": 4.2
+  },
+  {
+    "month": "2024-08-01",
+    "payems": 157757.0,
+    "nfp_change": 9.0,
+    "unrate": 4.2
+  },
+  {
+    "month": "2024-09-01",
+    "payems": 157912.0,
+    "nfp_change": 155.0,
+    "unrate": 4.1
+  },
+  {
+    "month": "2024-10-01",
+    "payems": 157945.0,
+    "nfp_change": 33.0,
+    "unrate": 4.1
+  },
+  {
+    "month": "2024-11-01",
+    "payems": 158079.0,
+    "nfp_change": 134.0,
+    "unrate": 4.2
+  },
+  {
+    "month": "2024-12-01",
+    "payems": 158316.0,
+    "nfp_change": 237.0,
+    "unrate": 4.1
+  },
+  {
+    "month": "2025-01-01",
+    "payems": 158268.0,
+    "nfp_change": -48.0,
+    "unrate": 4.0
+  },
+  {
+    "month": "2025-02-01",
+    "payems": 158310.0,
+    "nfp_change": 42.0,
+    "unrate": 4.2
+  },
+  {
+    "month": "2025-03-01",
+    "payems": 158377.0,
+    "nfp_change": 67.0,
+    "unrate": 4.2
+  },
+  {
+    "month": "2025-04-01",
+    "payems": 158485.0,
+    "nfp_change": 108.0,
+    "unrate": 4.2
+  },
+  {
+    "month": "2025-05-01",
+    "payems": 158498.0,
+    "nfp_change": 13.0,
+    "unrate": 4.3
+  },
+  {
+    "month": "2025-06-01",
+    "payems": 158478.0,
+    "nfp_change": -20.0,
+    "unrate": 4.1
+  },
+  {
+    "month": "2025-07-01",
+    "payems": 158542.0,
+    "nfp_change": 64.0,
+    "unrate": 4.3
+  },
+  {
+    "month": "2025-08-01",
+    "payems": 158472.0,
+    "nfp_change": -70.0,
+    "unrate": 4.3
+  },
+  {
+    "month": "2025-09-01",
+    "payems": 158548.0,
+    "nfp_change": 76.0,
+    "unrate": 4.4
+  },
+  {
+    "month": "2025-10-01",
+    "payems": 158408.0,
+    "nfp_change": -140.0,
+    "unrate": null
+  },
+  {
+    "month": "2025-11-01",
+    "payems": 158449.0,
+    "nfp_change": 41.0,
+    "unrate": 4.5
+  },
+  {
+    "month": "2025-12-01",
+    "payems": 158432.0,
+    "nfp_change": -17.0,
+    "unrate": 4.4
+  },
+  {
+    "month": "2026-01-01",
+    "payems": 158592.0,
+    "nfp_change": 160.0,
+    "unrate": 4.3
+  },
+  {
+    "month": "2026-02-01",
+    "payems": 158459.0,
+    "nfp_change": -133.0,
+    "unrate": 4.4
+  },
+  {
+    "month": "2026-03-01",
+    "payems": 158637.0,
+    "nfp_change": 178.0,
+    "unrate": 4.3
+  }
+]

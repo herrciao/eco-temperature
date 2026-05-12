@@ -1,4 +1,5 @@
 import { ClientOnly } from "@/components/ClientOnly";
+import { EmploymentPanel } from "@/components/EmploymentPanel";
 import { FactorCards } from "@/components/FactorCards";
 import { PanelTimeRangeSection } from "@/components/PanelTimeRangeSection";
 import { RegimeHero } from "@/components/RegimeHero";
@@ -81,6 +82,8 @@ cd dashboard && npm run dev`}
         <RegimeHero current={data.current} deltas={deltas} />
 
         <FactorCards current={data.current} deltas={deltas} panel={data.panel} />
+
+        <EmploymentPanel rows={data.employment} />
 
         <ClientOnly
           fallback={

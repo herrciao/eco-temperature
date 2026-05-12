@@ -46,9 +46,17 @@ export type CurrentRecord = Record<string, unknown> & {
   week: string;
 };
 
+export type EmploymentRow = {
+  month: string;
+  payems: number | null;
+  nfp_change: number | null;
+  unrate: number | null;
+};
+
 export interface DashboardData {
   current: CurrentRecord;
   panel: PanelRow[];
+  employment: EmploymentRow[];
 }
 
 // ─── Supply Chain Types ────────────────────────────────────────────────────

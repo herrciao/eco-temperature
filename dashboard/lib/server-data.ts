@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import type { CurrentRecord, DashboardData, PanelRow, ShortagePayload, SupplyChainData } from "./types";
+import type { CurrentRecord, DashboardData, EmploymentRow, PanelRow, ShortagePayload, SupplyChainData } from "./types";
 
 /** Resolve `output/web` whether `npm run dev` is started from `dashboard/` or project root. */
 function findWebDir(): string {
@@ -22,13 +22,28 @@ function findWebDir(): string {
   );
 }
 
+export function loadEmploymentData(): EmploymentRow[] {
+  const candidates = [
+    path.join(process.cwd(), "..", "output", "web", "employment_monthly.json"),
+    path.join(process.cwd(), "output", "web", "employment_monthly.json"),
+    path.join(process.cwd(), "data", "web", "employment_monthly.json"),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      return JSON.parse(fs.readFileSync(p, "utf-8")) as EmploymentRow[];
+    }
+  }
+  return [];
+}
+
 export function loadDashboardData(): DashboardData {
   const dir = findWebDir();
   const currentPath = path.join(dir, "current.json");
   const panelPath = path.join(dir, "panel.json");
   const raw = JSON.parse(fs.readFileSync(currentPath, "utf-8")) as CurrentRecord;
   const panel = JSON.parse(fs.readFileSync(panelPath, "utf-8")) as PanelRow[];
-  return { current: raw, panel };
+  const employment = loadEmploymentData();
+  return { current: raw, panel, employment };
 }
 
 /** Load shortage_signals.json if available, returns null otherwise. */
