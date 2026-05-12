@@ -65,8 +65,13 @@ def _escape(text: str) -> str:
 
 
 def send_brief(*, subject: str, markdown_body: str) -> None:
-    host = _env("SMTP_HOST", "smtp.gmail.com")
-    port = int(_env("SMTP_PORT", "587"))
+    # GitHub Actions 對「未新增的 secret」會傳空字串，不可用 int("")；
+    host = _env("SMTP_HOST", "") or "smtp.gmail.com"
+    port_raw = _env("SMTP_PORT", "") or "587"
+    try:
+        port = int(port_raw)
+    except ValueError:
+        port = 587
     user = _env("SMTP_USER")
     password = _env("SMTP_PASS")
     to_raw = _env("BRIEF_TO")

@@ -84,7 +84,18 @@ EIA_API_KEY=你的金鑰
 
 ## Daily Brief Email — SMTP 設定（每日早報推播用）
 
-早報 workflow 會在每日 UTC 04:30（柏林夏令 06:30 / 冬令 05:30）跑完管線後，自動寄一封 Markdown 早報到你的信箱。需在 GitHub → repo → Settings → Secrets and variables → Actions 設定以下 6 個 secret：
+早報 workflow 會在每日 UTC 04:30（柏林夏令 06:30 / 冬令 05:30）跑完管線後，自動寄一封 Markdown 早報到你的信箱。
+
+### 必填：資料管線 Secrets（許多人只設了 SMTP，忘記這兩項）
+
+workflow 會先呼叫 `pipeline.main`，**必須**在 GitHub → Settings → Secrets and variables → Actions 設定：
+
+| Secret 名稱 | 說明 |
+|-------------|------|
+| `FRED_API_KEY` | **必填**。與本機 `.env` 相同的 FRED 金鑰；未設定時管線會 `RuntimeError: FRED_API_KEY missing` → job 結束碼 **1**。 |
+| `EIA_API_KEY` | **選填**。無則美國原油庫存該列抓不到，其餘欄位照常。 |
+
+### SMTP（寄信）
 
 | Secret 名稱 | 範例值 | 說明 |
 |-------------|--------|------|

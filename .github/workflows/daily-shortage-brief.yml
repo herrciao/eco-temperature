@@ -1,5 +1,12 @@
 name: Daily Shortage Brief
 
+# 必要 Actions secrets（缺一不可，否則 job 會 exit 1）：
+#   - FRED_API_KEY   管線必填（與 .env 相同）
+#   - EIA_API_KEY    選填
+#   - SMTP_HOST/PORT/USER/PASS, BRIEF_TO  寄信必填
+#   - DASHBOARD_URL  選填（信件內連結）
+# 註：GitHub 對「未建立的 secret」會傳空字串；程式已對空的 SMTP_PORT 回退 587。
+
 on:
   # 每日 UTC 04:30 = 柏林夏令 06:30 / 冬令 05:30
   schedule:
