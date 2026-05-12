@@ -139,10 +139,15 @@ def collect_series_for_instruments(
     need_tsm = any(
         i.source == "computed" and i.primary == "tsm_adr_tw_premium" for i in inst_list
     )
+    need_payems_mom = any(
+        i.source == "computed" and i.primary == "payems_mom_diff" for i in inst_list
+    )
     if need_wti_brent:
         fred_daily_ids.update({"DCOILWTICO", "DCOILBRENTEU"})
     if need_tsm:
         yahoo_tickers.update({"TSM", "2330.TW"})
+    if need_payems_mom:
+        fred_monthly_ids.add("PAYEMS")
 
     all_fred = fred_daily_ids | fred_monthly_ids
     fd, fm = fetch_fred_series(all_fred, daily_ids=fred_daily_ids, monthly_ids=fred_monthly_ids)
@@ -177,6 +182,9 @@ def collect_series_for_instruments(
         monthly_wide = monthly_wide.join(tw.to_frame(), how="outer")
     except Exception as e:  # noqa: BLE001
         print(f"MOEA Taiwan export orders: {e}")
+
+    if need_payems_mom and "PAYEMS" in monthly_wide.columns:
+        monthly_wide["payems_mom_diff"] = monthly_wide["PAYEMS"].diff()
 
     for inst in inst_list:
         if inst.source != "eia_v2" or not inst.secondary or not inst.primary:
@@ -233,6 +241,8 @@ def resolve_series_for_instrument(
     if inst.source == "computed" or inst.source == "yahoo":
         if key in wide_daily.columns:
             return wide_daily[key].dropna()
+        if inst.source == "computed" and inst.fred_frequency == "monthly" and key in monthly_wide.columns:
+            return monthly_wide[key].dropna()
     if inst.source == "fred":
         if inst.fred_frequency == "daily" and key in wide_daily.columns:
             return wide_daily[key].dropna()

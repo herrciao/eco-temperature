@@ -1,13 +1,14 @@
-name: Weekly Shortage Radar Update
+name: Daily Shortage Brief
 
 on:
-  # schedule 已由 daily-shortage-brief.yml 取代（每日 UTC 04:30），此 workflow 僅保留手動觸發供緊急補跑
-  # schedule:
-  #   - cron: "0 1 * * 1"
+  # 每日 UTC 04:30 = 柏林夏令 06:30 / 冬令 05:30
+  schedule:
+    - cron: "30 4 * * *"
+  # 手動觸發（測試 / 補跑）
   workflow_dispatch:
 
 jobs:
-  update:
+  brief:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -27,6 +28,7 @@ jobs:
         working-directory: shortage-radar
         run: pip install -r requirements.txt
 
+      # ── 1. 跑 pipeline（fetch + score + render）；main.py 會自動先備份 .prev.json ──
       - name: Run Shortage Radar pipeline
         working-directory: shortage-radar
         env:
@@ -34,21 +36,37 @@ jobs:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
         run: PYTHONPATH=. python -m pipeline.main
 
-      - name: Copy JSON to dashboard data
+      # ── 2. 同步 JSON 到 dashboard/data/web/ ──
+      - name: Sync JSON to dashboard
         run: |
           cp shortage-radar/data/output/shortage_signals.json dashboard/data/web/shortage_signals.json
-          echo "Copied shortage_signals.json → dashboard/data/web/"
+          echo "Synced shortage_signals.json → dashboard/data/web/"
 
+      # ── 3. 產生 Markdown 早報並透過 SMTP 寄出 ──
+      - name: Generate and send daily brief
+        working-directory: shortage-radar
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          BRIEF_TO: ${{ secrets.BRIEF_TO }}
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
+        run: PYTHONPATH=. python -m pipeline.daily_brief --send
+
+      # ── 4. Commit 更新後的資料檔 ──
       - name: Commit updated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add shortage-radar/data/output/shortage_signals.json
+          git add shortage-radar/data/output/shortage_signals.prev.json
           git add shortage-radar/data/output/shortage_report.html
+          git add shortage-radar/data/output/daily_brief.md
           git add dashboard/data/web/shortage_signals.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: weekly shortage-radar data refresh $(date -u +%Y-%m-%d)"
+            git commit -m "chore: daily shortage-radar refresh $(date -u +%Y-%m-%d)"
             git push
           fi

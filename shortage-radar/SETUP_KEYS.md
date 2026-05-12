@@ -79,3 +79,54 @@ EIA_API_KEY=你的金鑰
 ## 選用：`FINNHUB_API_KEY`
 
 只影響你在 **Cursor MCP** 裡接 Finnhub，**不影響** shortage-radar 管線。若要申請： https://finnhub.io/register （有免費額度）。
+
+---
+
+## Daily Brief Email — SMTP 設定（每日早報推播用）
+
+早報 workflow 會在每日 UTC 04:30（柏林夏令 06:30 / 冬令 05:30）跑完管線後，自動寄一封 Markdown 早報到你的信箱。需在 GitHub → repo → Settings → Secrets and variables → Actions 設定以下 6 個 secret：
+
+| Secret 名稱 | 範例值 | 說明 |
+|-------------|--------|------|
+| `SMTP_HOST` | `smtp.gmail.com` | SMTP 伺服器 |
+| `SMTP_PORT` | `587` | 通常 587 (STARTTLS) 或 465 (SSL) |
+| `SMTP_USER` | `your@gmail.com` | 登入帳號 |
+| `SMTP_PASS` | `abcd efgh ijkl mnop` | **Gmail App Password**（見下方步驟）|
+| `BRIEF_TO`  | `your@gmail.com` | 收件人（多人用逗號分隔）|
+| `DASHBOARD_URL` | `https://xxx.vercel.app/shortage-radar` | 早報 footer 連結（可留空）|
+
+### Gmail App Password 取得步驟（2 分鐘）
+
+1. Google 帳戶 → **安全性** → **兩步驟驗證** → 確認已開啟
+2. 安全性 → 最下方 → **應用程式密碼**（App Passwords）
+3. 選擇「郵件」＋「其他裝置名稱（shortage-radar）」→ 產生
+4. 複製那 16 字元密碼（格式 `xxxx xxxx xxxx xxxx`）填入 `SMTP_PASS`
+
+> 其他郵件服務（Outlook、Mailjet、SendGrid）亦可，改對應 host/port/user/pass 即可。
+
+### 本機測試寄信
+
+在 repo 根目錄 `.env` 加入以下鍵後，跑一次管線再跑 brief：
+
+```bash
+# Daily Brief Email（本機測試用，.env 已在 .gitignore）
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your@gmail.com
+SMTP_PASS=你的 App Password
+BRIEF_TO=your@gmail.com
+DASHBOARD_URL=https://your-vercel-app.vercel.app/shortage-radar
+```
+
+```bash
+cd shortage-radar
+PYTHONPATH=. python -m pipeline.main          # 先跑一次產生今日 JSON
+PYTHONPATH=. python -m pipeline.daily_brief --send  # 產生早報並寄出
+```
+
+### 本機只看早報（不寄信）
+
+```bash
+cd shortage-radar
+PYTHONPATH=. python -m pipeline.daily_brief   # 輸出到 terminal + 寫 data/output/daily_brief.md
+```

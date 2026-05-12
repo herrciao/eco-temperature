@@ -380,6 +380,40 @@ def default_instruments() -> List[Instrument]:
             weight_spread=0.25,
             weight_curve=0.20,
         ),
+        # ── 美國就業市場 ───────────────────────────────────────────────────────
+        Instrument(
+            id="lead_us_payems",
+            category="leading",
+            display_zh="美國非農就業（水準，千人）",
+            display_en="US Total Nonfarm Payrolls (PAYEMS, thousands)",
+            source="fred",
+            primary="PAYEMS",
+            fred_frequency="monthly",
+            notes="FRED PAYEMS；每月第一個週五公布，本 cron 當天拿不到，隔日週六早報才出現新值。水準長期上升，z-score 偏高屬正常，請搭配月增減 instrument 判讀。",
+            orientation="high_is_tight",
+        ),
+        Instrument(
+            id="lead_us_payems_mom",
+            category="leading",
+            display_zh="美國非農就業（月增減，千人）",
+            display_en="US Nonfarm Payrolls MoM change (PAYEMS diff)",
+            source="computed",
+            primary="payems_mom_diff",
+            fred_frequency="monthly",
+            notes="PAYEMS 月環比差分（+175k 等同媒體常報數字）；新增偏強 → score 偏高，偏弱 → score 偏低。",
+            orientation="high_is_tight",
+        ),
+        Instrument(
+            id="lead_us_unrate",
+            category="leading",
+            display_zh="美國失業率（%）",
+            display_en="US Unemployment Rate (UNRATE, %)",
+            source="fred",
+            primary="UNRATE",
+            fred_frequency="monthly",
+            notes="FRED UNRATE；低失業率 = 勞動市場緊俏 → orientation=low_is_tight。與 NFP 同天公布。",
+            orientation="low_is_tight",
+        ),
     ]
 
 

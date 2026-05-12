@@ -132,6 +132,8 @@ def _inst_uses_monthly_window(inst: Instrument) -> bool:
         return True
     if inst.source == "fred" and inst.fred_frequency == "monthly":
         return True
+    if inst.source == "computed" and inst.fred_frequency == "monthly":
+        return True
     return False
 
 
