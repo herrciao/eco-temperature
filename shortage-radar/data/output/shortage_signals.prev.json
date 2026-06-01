@@ -1,7 +1,7 @@
 {
   "product": "shortage-radar",
   "version": 2,
-  "generated_at": "2026-05-30T07:24:43Z",
+  "generated_at": "2026-05-31T07:55:35Z",
   "trail_legend": "月頻：本期與往回第3、6筆月資料（約各差一季）。週頻(EIA)：往回第0、13、26筆週資料。日頻：最近交易日與約91天、182天前的最近觀測；若來源僅提供短期滑動表（無法滿足182天），「約2季前」改為可取得之最舊觀測（畫面上標*）。",
   "categories": [
     "energy",
@@ -441,8 +441,8 @@
         {
           "label": "約2季前",
           "date": "2025-11-28",
-          "value": 598.9664916992188,
-          "value_fmt": 598.966
+          "value": 598.966552734375,
+          "value_fmt": 598.967
         }
       ],
       "trail_mode": "daily",
@@ -473,8 +473,8 @@
           {
             "label": "約2季前",
             "date": "2025-11-28",
-            "value": 598.9664916992188,
-            "value_fmt": 598.966
+            "value": 598.966552734375,
+            "value_fmt": 598.967
           }
         ]
       }
@@ -806,61 +806,15 @@
       "display_zh": "銅 (IMF 月均值)",
       "display_en": "Copper (IMF via FRED)",
       "source": "fred",
-      "score": 69.3,
-      "latest": 12528.709545,
-      "latest_date": "2026-03-01",
-      "quarter_trail": [
-        {
-          "label": "本期",
-          "date": "2026-03-01",
-          "value": 12528.70954545455,
-          "value_fmt": 12528.71
-        },
-        {
-          "label": "約1季前",
-          "date": "2025-12-01",
-          "value": 11790.96409090909,
-          "value_fmt": 11790.964
-        },
-        {
-          "label": "約2季前",
-          "date": "2025-09-01",
-          "value": 9994.773181818182,
-          "value_fmt": 9994.773
-        }
-      ],
-      "trail_mode": "monthly",
+      "score": null,
+      "latest": null,
+      "latest_date": null,
+      "quarter_trail": null,
+      "trail_mode": null,
       "notes": "全球工業溫度計；中國需求敏感。",
       "detail": {
-        "score": 69.3,
-        "z_long": 2.303,
-        "z_short": 1.224,
-        "mom_30d_approx": 6.26,
-        "latest": 12528.709545,
-        "latest_date": "2026-03-01",
-        "data_completeness": 100.0,
-        "orientation": "high_is_tight",
-        "trail_mode": "monthly",
-        "quarter_trail": [
-          {
-            "label": "本期",
-            "date": "2026-03-01",
-            "value": 12528.70954545455,
-            "value_fmt": 12528.71
-          },
-          {
-            "label": "約1季前",
-            "date": "2025-12-01",
-            "value": 11790.96409090909,
-            "value_fmt": 11790.964
-          },
-          {
-            "label": "約2季前",
-            "date": "2025-09-01",
-            "value": 9994.773181818182,
-            "value_fmt": 9994.773
-          }
-        ]
+        "reason": "fetch_failed_or_empty",
+        "hint": "請確認 repo 根 .env 的 FRED_API_KEY 在 fred.stlouisfed.org 帳號內為有效金鑰（API 回應 not registered 代表金鑰不被接受）。"
       }
     },
     {
@@ -870,15 +824,15 @@
       "display_zh": "COMEX 銅期貨",
       "display_en": "HG=F copper futures",
       "source": "yahoo",
-      "score": 69.9,
-      "latest": 6.3595,
+      "score": 70.5,
+      "latest": 6.389,
       "latest_date": "2026-05-29",
       "quarter_trail": [
         {
           "label": "本期",
           "date": "2026-05-29",
-          "value": 6.359499931335449,
-          "value_fmt": 6.3595
+          "value": 6.388999938964844,
+          "value_fmt": 6.389
         },
         {
           "label": "約1季前",
@@ -896,11 +850,11 @@
       "trail_mode": "daily",
       "notes": "較 IMF 月頻更即時；可分鐘級情緒。",
       "detail": {
-        "score": 69.9,
-        "z_long": 1.771,
-        "z_short": 1.721,
-        "mom_30d_approx": 8.18,
-        "latest": 6.3595,
+        "score": 70.5,
+        "z_long": 1.822,
+        "z_short": 1.772,
+        "mom_30d_approx": 8.68,
+        "latest": 6.389,
         "latest_date": "2026-05-29",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
@@ -909,8 +863,8 @@
           {
             "label": "本期",
             "date": "2026-05-29",
-            "value": 6.359499931335449,
-            "value_fmt": 6.3595
+            "value": 6.388999938964844,
+            "value_fmt": 6.389
           },
           {
             "label": "約1季前",
@@ -1064,61 +1018,15 @@
       "display_zh": "鎳 (IMF)",
       "display_en": "Nickel",
       "source": "fred",
-      "score": 62.0,
-      "latest": 17076.292727,
-      "latest_date": "2026-03-01",
-      "quarter_trail": [
-        {
-          "label": "本期",
-          "date": "2026-03-01",
-          "value": 17076.29272727273,
-          "value_fmt": 17076.293
-        },
-        {
-          "label": "約1季前",
-          "date": "2025-12-01",
-          "value": 14879.03,
-          "value_fmt": 14879.03
-        },
-        {
-          "label": "約2季前",
-          "date": "2025-09-01",
-          "value": 15103.18363636364,
-          "value_fmt": 15103.184
-        }
-      ],
-      "trail_mode": "monthly",
+      "score": null,
+      "latest": null,
+      "latest_date": null,
+      "quarter_trail": null,
+      "trail_mode": null,
       "notes": "",
       "detail": {
-        "score": 62.0,
-        "z_long": -0.012,
-        "z_short": 1.393,
-        "mom_30d_approx": 14.77,
-        "latest": 17076.292727,
-        "latest_date": "2026-03-01",
-        "data_completeness": 100.0,
-        "orientation": "high_is_tight",
-        "trail_mode": "monthly",
-        "quarter_trail": [
-          {
-            "label": "本期",
-            "date": "2026-03-01",
-            "value": 17076.29272727273,
-            "value_fmt": 17076.293
-          },
-          {
-            "label": "約1季前",
-            "date": "2025-12-01",
-            "value": 14879.03,
-            "value_fmt": 14879.03
-          },
-          {
-            "label": "約2季前",
-            "date": "2025-09-01",
-            "value": 15103.18363636364,
-            "value_fmt": 15103.184
-          }
-        ]
+        "reason": "fetch_failed_or_empty",
+        "hint": "請確認 repo 根 .env 的 FRED_API_KEY 在 fred.stlouisfed.org 帳號內為有效金鑰（API 回應 not registered 代表金鑰不被接受）。"
       }
     },
     {
@@ -1128,61 +1036,15 @@
       "display_zh": "錫 (IMF)",
       "display_en": "Tin",
       "source": "fred",
-      "score": 72.8,
-      "latest": 47323.681818,
-      "latest_date": "2026-03-01",
-      "quarter_trail": [
-        {
-          "label": "本期",
-          "date": "2026-03-01",
-          "value": 47323.68181818182,
-          "value_fmt": 47323.682
-        },
-        {
-          "label": "約1季前",
-          "date": "2025-12-01",
-          "value": 41402.90909090909,
-          "value_fmt": 41402.909
-        },
-        {
-          "label": "約2季前",
-          "date": "2025-09-01",
-          "value": 34528.05772727273,
-          "value_fmt": 34528.058
-        }
-      ],
-      "trail_mode": "monthly",
+      "score": null,
+      "latest": null,
+      "latest_date": null,
+      "quarter_trail": null,
+      "trail_mode": null,
       "notes": "",
       "detail": {
-        "score": 72.8,
-        "z_long": 2.41,
-        "z_short": 1.37,
-        "mom_30d_approx": 14.3,
-        "latest": 47323.681818,
-        "latest_date": "2026-03-01",
-        "data_completeness": 100.0,
-        "orientation": "high_is_tight",
-        "trail_mode": "monthly",
-        "quarter_trail": [
-          {
-            "label": "本期",
-            "date": "2026-03-01",
-            "value": 47323.68181818182,
-            "value_fmt": 47323.682
-          },
-          {
-            "label": "約1季前",
-            "date": "2025-12-01",
-            "value": 41402.90909090909,
-            "value_fmt": 41402.909
-          },
-          {
-            "label": "約2季前",
-            "date": "2025-09-01",
-            "value": 34528.05772727273,
-            "value_fmt": 34528.058
-          }
-        ]
+        "reason": "fetch_failed_or_empty",
+        "hint": "請確認 repo 根 .env 的 FRED_API_KEY 在 fred.stlouisfed.org 帳號內為有效金鑰（API 回應 not registered 代表金鑰不被接受）。"
       }
     },
     {
@@ -1576,61 +1438,15 @@
       "display_zh": "棕櫚油 (IMF)",
       "display_en": "Palm oil",
       "source": "fred",
-      "score": 73.0,
-      "latest": 1121.177897,
-      "latest_date": "2026-03-01",
-      "quarter_trail": [
-        {
-          "label": "本期",
-          "date": "2026-03-01",
-          "value": 1121.177897131898,
-          "value_fmt": 1121.178
-        },
-        {
-          "label": "約1季前",
-          "date": "2025-12-01",
-          "value": 981.2246703958918,
-          "value_fmt": 981.225
-        },
-        {
-          "label": "約2季前",
-          "date": "2025-09-01",
-          "value": 1034.900269774872,
-          "value_fmt": 1034.9
-        }
-      ],
-      "trail_mode": "monthly",
+      "score": null,
+      "latest": null,
+      "latest_date": null,
+      "quarter_trail": null,
+      "trail_mode": null,
       "notes": "",
       "detail": {
-        "score": 73.0,
-        "z_long": 1.727,
-        "z_short": 2.087,
-        "mom_30d_approx": 14.26,
-        "latest": 1121.177897,
-        "latest_date": "2026-03-01",
-        "data_completeness": 100.0,
-        "orientation": "high_is_tight",
-        "trail_mode": "monthly",
-        "quarter_trail": [
-          {
-            "label": "本期",
-            "date": "2026-03-01",
-            "value": 1121.177897131898,
-            "value_fmt": 1121.178
-          },
-          {
-            "label": "約1季前",
-            "date": "2025-12-01",
-            "value": 981.2246703958918,
-            "value_fmt": 981.225
-          },
-          {
-            "label": "約2季前",
-            "date": "2025-09-01",
-            "value": 1034.900269774872,
-            "value_fmt": 1034.9
-          }
-        ]
+        "reason": "fetch_failed_or_empty",
+        "hint": "請確認 repo 根 .env 的 FRED_API_KEY 在 fred.stlouisfed.org 帳號內為有效金鑰（API 回應 not registered 代表金鑰不被接受）。"
       }
     },
     {
@@ -1896,61 +1712,15 @@
       "display_zh": "韓國貨品出口（FRED）",
       "display_en": "Korea exports of goods (FRED IMF series)",
       "source": "fred",
-      "score": 81.6,
-      "latest": 84245570000.0,
-      "latest_date": "2026-03-01",
-      "quarter_trail": [
-        {
-          "label": "本期",
-          "date": "2026-03-01",
-          "value": 84245570000.0,
-          "value_fmt": 84245570000.0
-        },
-        {
-          "label": "約1季前",
-          "date": "2025-12-01",
-          "value": 65440510000.0,
-          "value_fmt": 65440510000.0
-        },
-        {
-          "label": "約2季前",
-          "date": "2025-09-01",
-          "value": 63211650000.0,
-          "value_fmt": 63211650000.0
-        }
-      ],
-      "trail_mode": "monthly",
+      "score": null,
+      "latest": null,
+      "latest_date": null,
+      "quarter_trail": null,
+      "trail_mode": null,
       "notes": "IMT 貨品出口；免費 FRED。不需韓國 data.go.kr key。",
       "detail": {
-        "score": 81.6,
-        "z_long": 3.942,
-        "z_short": 2.462,
-        "mom_30d_approx": 28.74,
-        "latest": 84245570000.0,
-        "latest_date": "2026-03-01",
-        "data_completeness": 100.0,
-        "orientation": "high_is_tight",
-        "trail_mode": "monthly",
-        "quarter_trail": [
-          {
-            "label": "本期",
-            "date": "2026-03-01",
-            "value": 84245570000.0,
-            "value_fmt": 84245570000.0
-          },
-          {
-            "label": "約1季前",
-            "date": "2025-12-01",
-            "value": 65440510000.0,
-            "value_fmt": 65440510000.0
-          },
-          {
-            "label": "約2季前",
-            "date": "2025-09-01",
-            "value": 63211650000.0,
-            "value_fmt": 63211650000.0
-          }
-        ]
+        "reason": "fetch_failed_or_empty",
+        "hint": "請確認 repo 根 .env 的 FRED_API_KEY 在 fred.stlouisfed.org 帳號內為有效金鑰（API 回應 not registered 代表金鑰不被接受）。"
       }
     },
     {
@@ -2024,61 +1794,15 @@
       "display_zh": "美國非農就業（水準，千人）",
       "display_en": "US Total Nonfarm Payrolls (PAYEMS, thousands)",
       "source": "fred",
-      "score": 65.6,
-      "latest": 158736.0,
-      "latest_date": "2026-04-01",
-      "quarter_trail": [
-        {
-          "label": "本期",
-          "date": "2026-04-01",
-          "value": 158736.0,
-          "value_fmt": 158736.0
-        },
-        {
-          "label": "約1季前",
-          "date": "2026-01-01",
-          "value": 158592.0,
-          "value_fmt": 158592.0
-        },
-        {
-          "label": "約2季前",
-          "date": "2025-10-01",
-          "value": 158408.0,
-          "value_fmt": 158408.0
-        }
-      ],
-      "trail_mode": "monthly",
+      "score": null,
+      "latest": null,
+      "latest_date": null,
+      "quarter_trail": null,
+      "trail_mode": null,
       "notes": "FRED PAYEMS；每月第一個週五公布，本 cron 當天拿不到，隔日週六早報才出現新值。水準長期上升，z-score 偏高屬正常，請搭配月增減 instrument 判讀。",
       "detail": {
-        "score": 65.6,
-        "z_long": 1.119,
-        "z_short": 2.288,
-        "mom_30d_approx": 0.09,
-        "latest": 158736.0,
-        "latest_date": "2026-04-01",
-        "data_completeness": 100.0,
-        "orientation": "high_is_tight",
-        "trail_mode": "monthly",
-        "quarter_trail": [
-          {
-            "label": "本期",
-            "date": "2026-04-01",
-            "value": 158736.0,
-            "value_fmt": 158736.0
-          },
-          {
-            "label": "約1季前",
-            "date": "2026-01-01",
-            "value": 158592.0,
-            "value_fmt": 158592.0
-          },
-          {
-            "label": "約2季前",
-            "date": "2025-10-01",
-            "value": 158408.0,
-            "value_fmt": 158408.0
-          }
-        ]
+        "reason": "fetch_failed_or_empty",
+        "hint": "請確認 repo 根 .env 的 FRED_API_KEY 在 fred.stlouisfed.org 帳號內為有效金鑰（API 回應 not registered 代表金鑰不被接受）。"
       }
     },
     {
@@ -2088,61 +1812,15 @@
       "display_zh": "美國非農就業（月增減，千人）",
       "display_en": "US Nonfarm Payrolls MoM change (PAYEMS diff)",
       "source": "computed",
-      "score": 48.2,
-      "latest": 115.0,
-      "latest_date": "2026-04-01",
-      "quarter_trail": [
-        {
-          "label": "本期",
-          "date": "2026-04-01",
-          "value": 115.0,
-          "value_fmt": 115.0
-        },
-        {
-          "label": "約1季前",
-          "date": "2026-01-01",
-          "value": 160.0,
-          "value_fmt": 160.0
-        },
-        {
-          "label": "約2季前",
-          "date": "2025-10-01",
-          "value": -140.0,
-          "value_fmt": -140.0
-        }
-      ],
-      "trail_mode": "monthly",
+      "score": null,
+      "latest": null,
+      "latest_date": null,
+      "quarter_trail": null,
+      "trail_mode": null,
       "notes": "PAYEMS 月環比差分（+175k 等同媒體常報數字）；新增偏強 → score 偏高，偏弱 → score 偏低。",
       "detail": {
-        "score": 48.2,
-        "z_long": 0.208,
-        "z_short": 0.869,
-        "mom_30d_approx": -28.12,
-        "latest": 115.0,
-        "latest_date": "2026-04-01",
-        "data_completeness": 100.0,
-        "orientation": "high_is_tight",
-        "trail_mode": "monthly",
-        "quarter_trail": [
-          {
-            "label": "本期",
-            "date": "2026-04-01",
-            "value": 115.0,
-            "value_fmt": 115.0
-          },
-          {
-            "label": "約1季前",
-            "date": "2026-01-01",
-            "value": 160.0,
-            "value_fmt": 160.0
-          },
-          {
-            "label": "約2季前",
-            "date": "2025-10-01",
-            "value": -140.0,
-            "value_fmt": -140.0
-          }
-        ]
+        "reason": "fetch_failed_or_empty",
+        "hint": "多為上游欄位缺失（例如 FRED 原油未取得時，WTI–Brent 價差無法計算）。"
       }
     },
     {
