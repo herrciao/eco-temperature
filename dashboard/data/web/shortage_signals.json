@@ -1,7 +1,7 @@
 {
   "product": "shortage-radar",
   "version": 2,
-  "generated_at": "2026-10-03T09:56:49Z",
+  "generated_at": "2026-10-04T10:40:17Z",
   "trail_legend": "月頻：本期與往回第3、6筆月資料（約各差一季）。週頻(EIA)：往回第0、13、26筆週資料。日頻：最近交易日與約91天、182天前的最近觀測；若來源僅提供短期滑動表（無法滿足182天），「約2季前」改為可取得之最舊觀測（畫面上標*）。",
   "categories": [
     "energy",
@@ -633,7 +633,7 @@
         {
           "label": "約2季前",
           "date": "2026-04-02",
-          "value": 339.2270202636719,
+          "value": 339.22698974609375,
           "value_fmt": 339.227
         }
       ],
@@ -665,7 +665,7 @@
           {
             "label": "約2季前",
             "date": "2026-04-02",
-            "value": 339.2270202636719,
+            "value": 339.22698974609375,
             "value_fmt": 339.227
           }
         ]
@@ -678,15 +678,61 @@
       "display_zh": "台積電 ADR–台股溢價 (normalized %)",
       "display_en": "TSM ADR vs 2330.TW normalized spread",
       "source": "computed",
-      "score": null,
-      "latest": null,
-      "latest_date": null,
-      "quarter_trail": null,
-      "trail_mode": null,
+      "score": 70.5,
+      "latest": 7.628887,
+      "latest_date": "2026-10-02",
+      "quarter_trail": [
+        {
+          "label": "本期",
+          "date": "2026-10-02",
+          "value": 7.628887013700458,
+          "value_fmt": 7.628887
+        },
+        {
+          "label": "約1季前",
+          "date": "2026-07-02",
+          "value": -3.600104791305103,
+          "value_fmt": -3.600105
+        },
+        {
+          "label": "約2季前",
+          "date": "2026-04-02",
+          "value": -1.2126177623255185,
+          "value_fmt": -1.212618
+        }
+      ],
+      "trail_mode": "daily",
       "notes": "同公司兩市場價差 proxy（未含 ADR 換股比/匯率）；需四視角 triangulate。",
       "detail": {
-        "reason": "fetch_failed_or_empty",
-        "hint": "多為上游欄位缺失（例如 FRED 原油未取得時，WTI–Brent 價差無法計算）。"
+        "score": 70.5,
+        "z_long": 3.056,
+        "z_short": 3.082,
+        "mom_30d_approx": -379.08,
+        "latest": 7.628887,
+        "latest_date": "2026-10-02",
+        "data_completeness": 100.0,
+        "orientation": "high_is_tight",
+        "trail_mode": "daily",
+        "quarter_trail": [
+          {
+            "label": "本期",
+            "date": "2026-10-02",
+            "value": 7.628887013700458,
+            "value_fmt": 7.628887
+          },
+          {
+            "label": "約1季前",
+            "date": "2026-07-02",
+            "value": -3.600104791305103,
+            "value_fmt": -3.600105
+          },
+          {
+            "label": "約2季前",
+            "date": "2026-04-02",
+            "value": -1.2126177623255185,
+            "value_fmt": -1.212618
+          }
+        ]
       }
     },
     {
@@ -824,15 +870,15 @@
       "display_zh": "COMEX 銅期貨",
       "display_en": "HG=F copper futures",
       "source": "yahoo",
-      "score": 59.7,
-      "latest": 6.492,
+      "score": 61.2,
+      "latest": 6.549,
       "latest_date": "2026-10-02",
       "quarter_trail": [
         {
           "label": "本期",
           "date": "2026-10-02",
-          "value": 6.492000102996826,
-          "value_fmt": 6.492
+          "value": 6.548999786376953,
+          "value_fmt": 6.549
         },
         {
           "label": "約1季前",
@@ -850,11 +896,11 @@
       "trail_mode": "daily",
       "notes": "較 IMF 月頻更即時；可分鐘級情緒。",
       "detail": {
-        "score": 59.7,
-        "z_long": 1.089,
-        "z_short": 1.06,
-        "mom_30d_approx": -0.14,
-        "latest": 6.492,
+        "score": 61.2,
+        "z_long": 1.194,
+        "z_short": 1.17,
+        "mom_30d_approx": 0.74,
+        "latest": 6.549,
         "latest_date": "2026-10-02",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
@@ -863,8 +909,8 @@
           {
             "label": "本期",
             "date": "2026-10-02",
-            "value": 6.492000102996826,
-            "value_fmt": 6.492
+            "value": 6.548999786376953,
+            "value_fmt": 6.549
           },
           {
             "label": "約1季前",
