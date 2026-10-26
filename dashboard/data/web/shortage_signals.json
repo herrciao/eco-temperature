@@ -1,7 +1,7 @@
 {
   "product": "shortage-radar",
   "version": 2,
-  "generated_at": "2026-10-25T09:15:14Z",
+  "generated_at": "2026-10-26T10:19:18Z",
   "trail_legend": "月頻：本期與往回第3、6筆月資料（約各差一季）。週頻(EIA)：往回第0、13、26筆週資料。日頻：最近交易日與約91天、182天前的最近觀測；若來源僅提供短期滑動表（無法滿足182天），「約2季前」改為可取得之最舊觀測（畫面上標*）。",
   "categories": [
     "energy",
@@ -166,59 +166,59 @@
       "display_zh": "美國天然氣期貨 (NG)",
       "display_en": "NYMEX natural gas front month",
       "source": "yahoo",
-      "score": 43.1,
-      "latest": 3.05,
-      "latest_date": "2026-10-23",
+      "score": 43.5,
+      "latest": 3.014,
+      "latest_date": "2026-10-26",
       "quarter_trail": [
         {
           "label": "本期",
-          "date": "2026-10-23",
-          "value": 3.049999952316284,
-          "value_fmt": 3.05
+          "date": "2026-10-26",
+          "value": 3.0139999389648438,
+          "value_fmt": 3.014
         },
         {
           "label": "約1季前",
-          "date": "2026-07-24",
-          "value": 2.871000051498413,
-          "value_fmt": 2.871
+          "date": "2026-07-27",
+          "value": 2.7669999599456787,
+          "value_fmt": 2.767
         },
         {
           "label": "約2季前",
-          "date": "2026-04-24",
-          "value": 2.5230000019073486,
-          "value_fmt": 2.523
+          "date": "2026-04-27",
+          "value": 2.549999952316284,
+          "value_fmt": 2.55
         }
       ],
       "trail_mode": "daily",
       "notes": "Yahoo NG=F；對沖/投機較多，現貨用 Henry Hub 交叉驗證。",
       "detail": {
-        "score": 43.1,
-        "z_long": -0.366,
-        "z_short": -0.329,
-        "mom_30d_approx": -7.49,
-        "latest": 3.05,
-        "latest_date": "2026-10-23",
+        "score": 43.5,
+        "z_long": -0.409,
+        "z_short": -0.368,
+        "mom_30d_approx": -5.69,
+        "latest": 3.014,
+        "latest_date": "2026-10-26",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
         "trail_mode": "daily",
         "quarter_trail": [
           {
             "label": "本期",
-            "date": "2026-10-23",
-            "value": 3.049999952316284,
-            "value_fmt": 3.05
+            "date": "2026-10-26",
+            "value": 3.0139999389648438,
+            "value_fmt": 3.014
           },
           {
             "label": "約1季前",
-            "date": "2026-07-24",
-            "value": 2.871000051498413,
-            "value_fmt": 2.871
+            "date": "2026-07-27",
+            "value": 2.7669999599456787,
+            "value_fmt": 2.767
           },
           {
             "label": "約2季前",
-            "date": "2026-04-24",
-            "value": 2.5230000019073486,
-            "value_fmt": 2.523
+            "date": "2026-04-27",
+            "value": 2.549999952316284,
+            "value_fmt": 2.55
           }
         ]
       }
@@ -691,14 +691,14 @@
         {
           "label": "約1季前",
           "date": "2026-07-24",
-          "value": -4.867727761125218,
-          "value_fmt": -4.867728
+          "value": -4.867727220038798,
+          "value_fmt": -4.867727
         },
         {
           "label": "約2季前",
           "date": "2026-04-24",
-          "value": -1.4226555948869235,
-          "value_fmt": -1.422656
+          "value": -1.4226515475113777,
+          "value_fmt": -1.422652
         }
       ],
       "trail_mode": "daily",
@@ -723,14 +723,14 @@
           {
             "label": "約1季前",
             "date": "2026-07-24",
-            "value": -4.867727761125218,
-            "value_fmt": -4.867728
+            "value": -4.867727220038798,
+            "value_fmt": -4.867727
           },
           {
             "label": "約2季前",
             "date": "2026-04-24",
-            "value": -1.4226555948869235,
-            "value_fmt": -1.422656
+            "value": -1.4226515475113777,
+            "value_fmt": -1.422652
           }
         ]
       }
@@ -870,59 +870,59 @@
       "display_zh": "COMEX 銅期貨",
       "display_en": "HG=F copper futures",
       "source": "yahoo",
-      "score": 57.3,
-      "latest": 6.5075,
-      "latest_date": "2026-10-23",
+      "score": 58.2,
+      "latest": 6.537,
+      "latest_date": "2026-10-26",
       "quarter_trail": [
         {
           "label": "本期",
-          "date": "2026-10-23",
-          "value": 6.507500171661377,
-          "value_fmt": 6.5075
+          "date": "2026-10-26",
+          "value": 6.5370001792907715,
+          "value_fmt": 6.537
         },
         {
           "label": "約1季前",
-          "date": "2026-07-24",
-          "value": 6.320000171661377,
-          "value_fmt": 6.32
+          "date": "2026-07-27",
+          "value": 6.339000225067139,
+          "value_fmt": 6.339
         },
         {
           "label": "約2季前",
-          "date": "2026-04-24",
-          "value": 6.023499965667725,
-          "value_fmt": 6.0235
+          "date": "2026-04-27",
+          "value": 6.01800012588501,
+          "value_fmt": 6.018
         }
       ],
       "trail_mode": "daily",
       "notes": "較 IMF 月頻更即時；可分鐘級情緒。",
       "detail": {
-        "score": 57.3,
-        "z_long": 1.002,
-        "z_short": 0.977,
-        "mom_30d_approx": -3.14,
-        "latest": 6.5075,
-        "latest_date": "2026-10-23",
+        "score": 58.2,
+        "z_long": 1.054,
+        "z_short": 1.033,
+        "mom_30d_approx": -2.37,
+        "latest": 6.537,
+        "latest_date": "2026-10-26",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
         "trail_mode": "daily",
         "quarter_trail": [
           {
             "label": "本期",
-            "date": "2026-10-23",
-            "value": 6.507500171661377,
-            "value_fmt": 6.5075
+            "date": "2026-10-26",
+            "value": 6.5370001792907715,
+            "value_fmt": 6.537
           },
           {
             "label": "約1季前",
-            "date": "2026-07-24",
-            "value": 6.320000171661377,
-            "value_fmt": 6.32
+            "date": "2026-07-27",
+            "value": 6.339000225067139,
+            "value_fmt": 6.339
           },
           {
             "label": "約2季前",
-            "date": "2026-04-24",
-            "value": 6.023499965667725,
-            "value_fmt": 6.0235
+            "date": "2026-04-27",
+            "value": 6.01800012588501,
+            "value_fmt": 6.018
           }
         ]
       }
@@ -1446,59 +1446,59 @@
       "display_zh": "玉米期貨",
       "display_en": "Corn futures",
       "source": "yahoo",
-      "score": 45.6,
-      "latest": 456.0,
-      "latest_date": "2026-10-23",
+      "score": 44.9,
+      "latest": 454.0,
+      "latest_date": "2026-10-26",
       "quarter_trail": [
         {
           "label": "本期",
-          "date": "2026-10-23",
-          "value": 456.0,
-          "value_fmt": 456.0
+          "date": "2026-10-26",
+          "value": 454.0,
+          "value_fmt": 454.0
         },
         {
           "label": "約1季前",
-          "date": "2026-07-24",
-          "value": 464.25,
-          "value_fmt": 464.25
+          "date": "2026-07-27",
+          "value": 451.75,
+          "value_fmt": 451.75
         },
         {
           "label": "約2季前",
-          "date": "2026-04-24",
-          "value": 455.0,
-          "value_fmt": 455.0
+          "date": "2026-04-27",
+          "value": 460.75,
+          "value_fmt": 460.75
         }
       ],
       "trail_mode": "daily",
       "notes": "",
       "detail": {
-        "score": 45.6,
-        "z_long": 0.136,
-        "z_short": 0.099,
-        "mom_30d_approx": -13.55,
-        "latest": 456.0,
-        "latest_date": "2026-10-23",
+        "score": 44.9,
+        "z_long": 0.066,
+        "z_short": 0.029,
+        "mom_30d_approx": -14.06,
+        "latest": 454.0,
+        "latest_date": "2026-10-26",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
         "trail_mode": "daily",
         "quarter_trail": [
           {
             "label": "本期",
-            "date": "2026-10-23",
-            "value": 456.0,
-            "value_fmt": 456.0
+            "date": "2026-10-26",
+            "value": 454.0,
+            "value_fmt": 454.0
           },
           {
             "label": "約1季前",
-            "date": "2026-07-24",
-            "value": 464.25,
-            "value_fmt": 464.25
+            "date": "2026-07-27",
+            "value": 451.75,
+            "value_fmt": 451.75
           },
           {
             "label": "約2季前",
-            "date": "2026-04-24",
-            "value": 455.0,
-            "value_fmt": 455.0
+            "date": "2026-04-27",
+            "value": 460.75,
+            "value_fmt": 460.75
           }
         ]
       }
@@ -1638,59 +1638,59 @@
       "display_zh": "黃豆期貨",
       "display_en": "Soybean futures",
       "source": "yahoo",
-      "score": 58.7,
-      "latest": 1256.5,
-      "latest_date": "2026-10-23",
+      "score": 58.1,
+      "latest": 1254.0,
+      "latest_date": "2026-10-26",
       "quarter_trail": [
         {
           "label": "本期",
-          "date": "2026-10-23",
-          "value": 1256.5,
-          "value_fmt": 1256.5
+          "date": "2026-10-26",
+          "value": 1254.0,
+          "value_fmt": 1254.0
         },
         {
           "label": "約1季前",
-          "date": "2026-07-24",
-          "value": 1248.0,
-          "value_fmt": 1248.0
+          "date": "2026-07-27",
+          "value": 1208.5,
+          "value_fmt": 1208.5
         },
         {
           "label": "約2季前",
-          "date": "2026-04-24",
-          "value": 1163.75,
-          "value_fmt": 1163.75
+          "date": "2026-04-27",
+          "value": 1177.25,
+          "value_fmt": 1177.25
         }
       ],
       "trail_mode": "daily",
       "notes": "",
       "detail": {
-        "score": 58.7,
-        "z_long": 1.241,
-        "z_short": 1.196,
-        "mom_30d_approx": -4.63,
-        "latest": 1256.5,
-        "latest_date": "2026-10-23",
+        "score": 58.1,
+        "z_long": 1.199,
+        "z_short": 1.153,
+        "mom_30d_approx": -4.93,
+        "latest": 1254.0,
+        "latest_date": "2026-10-26",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
         "trail_mode": "daily",
         "quarter_trail": [
           {
             "label": "本期",
-            "date": "2026-10-23",
-            "value": 1256.5,
-            "value_fmt": 1256.5
+            "date": "2026-10-26",
+            "value": 1254.0,
+            "value_fmt": 1254.0
           },
           {
             "label": "約1季前",
-            "date": "2026-07-24",
-            "value": 1248.0,
-            "value_fmt": 1248.0
+            "date": "2026-07-27",
+            "value": 1208.5,
+            "value_fmt": 1208.5
           },
           {
             "label": "約2季前",
-            "date": "2026-04-24",
-            "value": 1163.75,
-            "value_fmt": 1163.75
+            "date": "2026-04-27",
+            "value": 1177.25,
+            "value_fmt": 1177.25
           }
         ]
       }
