@@ -1,7 +1,7 @@
 {
   "product": "shortage-radar",
   "version": 2,
-  "generated_at": "2026-10-31T10:29:05Z",
+  "generated_at": "2026-11-01T11:23:32Z",
   "trail_legend": "月頻：本期與往回第3、6筆月資料（約各差一季）。週頻(EIA)：往回第0、13、26筆週資料。日頻：最近交易日與約91天、182天前的最近觀測；若來源僅提供短期滑動表（無法滿足182天），「約2季前」改為可取得之最舊觀測（畫面上標*）。",
   "categories": [
     "energy",
@@ -697,7 +697,7 @@
         {
           "label": "約2季前",
           "date": "2026-04-30",
-          "value": -0.004450368230490831,
+          "value": -0.004450228648900101,
           "value_fmt": -0.00445
         }
       ],
@@ -729,7 +729,7 @@
           {
             "label": "約2季前",
             "date": "2026-04-30",
-            "value": -0.004450368230490831,
+            "value": -0.004450228648900101,
             "value_fmt": -0.00445
           }
         ]
@@ -870,15 +870,15 @@
       "display_zh": "COMEX 銅期貨",
       "display_en": "HG=F copper futures",
       "source": "yahoo",
-      "score": 57.6,
-      "latest": 6.4585,
+      "score": 58.2,
+      "latest": 6.482,
       "latest_date": "2026-10-30",
       "quarter_trail": [
         {
           "label": "本期",
           "date": "2026-10-30",
-          "value": 6.458499908447266,
-          "value_fmt": 6.4585
+          "value": 6.48199987411499,
+          "value_fmt": 6.482
         },
         {
           "label": "約1季前",
@@ -896,11 +896,11 @@
       "trail_mode": "daily",
       "notes": "較 IMF 月頻更即時；可分鐘級情緒。",
       "detail": {
-        "score": 57.6,
-        "z_long": 0.866,
-        "z_short": 0.837,
-        "mom_30d_approx": -0.36,
-        "latest": 6.4585,
+        "score": 58.2,
+        "z_long": 0.913,
+        "z_short": 0.888,
+        "mom_30d_approx": 0.0,
+        "latest": 6.482,
         "latest_date": "2026-10-30",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
@@ -909,8 +909,8 @@
           {
             "label": "本期",
             "date": "2026-10-30",
-            "value": 6.458499908447266,
-            "value_fmt": 6.4585
+            "value": 6.48199987411499,
+            "value_fmt": 6.482
           },
           {
             "label": "約1季前",
@@ -1638,15 +1638,15 @@
       "display_zh": "黃豆期貨",
       "display_en": "Soybean futures",
       "source": "yahoo",
-      "score": 54.1,
-      "latest": 1222.25,
+      "score": 56.0,
+      "latest": 1234.25,
       "latest_date": "2026-10-30",
       "quarter_trail": [
         {
           "label": "本期",
           "date": "2026-10-30",
-          "value": 1222.25,
-          "value_fmt": 1222.25
+          "value": 1234.25,
+          "value_fmt": 1234.25
         },
         {
           "label": "約1季前",
@@ -1664,11 +1664,11 @@
       "trail_mode": "daily",
       "notes": "",
       "detail": {
-        "score": 54.1,
-        "z_long": 0.746,
-        "z_short": 0.702,
-        "mom_30d_approx": -4.81,
-        "latest": 1222.25,
+        "score": 56.0,
+        "z_long": 0.909,
+        "z_short": 0.862,
+        "mom_30d_approx": -3.87,
+        "latest": 1234.25,
         "latest_date": "2026-10-30",
         "data_completeness": 100.0,
         "orientation": "high_is_tight",
@@ -1677,8 +1677,8 @@
           {
             "label": "本期",
             "date": "2026-10-30",
-            "value": 1222.25,
-            "value_fmt": 1222.25
+            "value": 1234.25,
+            "value_fmt": 1234.25
           },
           {
             "label": "約1季前",
